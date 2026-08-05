@@ -1,7 +1,8 @@
 # Smarter Devices, Smaller Models: Unlocking Embedded AI Through Efficient Compression
 
 **Company / Org:** MathWorks  
-**Challenge Advisors:** Shanmukh Srinivas, [Email address]     
+**Challenge Advisors:** Shanmukh Srinivas, [Email address]    
+**AI Studio Coach:** Rashidah Carr, rashidah.carr@breakthroughtech.org     
 **Program:** Break Through Tech AI Studio - Fall 2026
 
 ---
