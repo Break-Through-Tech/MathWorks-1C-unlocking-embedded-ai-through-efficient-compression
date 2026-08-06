@@ -107,7 +107,7 @@ If the core milestones are completed ahead of schedule, consider exploring:
 
 ## 🤝 How We'll Work Together
 
-**Check-ins:** During our biweekly 60-min AI Studio Lab Section meeting block (2nd and 4th week of every month)  
+**Check-ins:** During our biweekly 45-min AI Studio Lab Section meeting block (2nd and 4th week of every month)  
 **Communication:** Slack (Break Through Tech workspace)  
 **Response time:** Within 48 hours on weekdays  
 
