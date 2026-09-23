@@ -1,17 +1,11 @@
-"""
-Creates the baseline model. 
-
-Calling syntax: python3 model.py (from cwd)
-
-Each function may have a subprocess to help keep code readable.
-"""
+"""Creates the baseline model."""
 
 import data
 from sklearn import SVC
 import itertools
 import metrics
 import subprocess
-    
+import pandas as pd
 
 def compute_acc(model, X, y) -> float:
     """
@@ -22,13 +16,13 @@ def compute_acc(model, X, y) -> float:
         X: Input feature data. (X_train OR X_val OR X_test)
         y: Input Label data. (y_train OR y_val OR y_test)
 
-    Returns: Accuracy between predictions, and actual values.
+    Returns: 
+        Accuracy between predictions, and actual values.
     """
-    model.fit(X, y)
     y_pred = model.predict(X)
     return metrics.accuracy(y, y_pred)
 
-def optimize(X_val, y_val):
+def optimize(X_train_std, y_train, X_val, y_val):
     """
     Finds the best configuration of hyperparameters.
 
@@ -52,8 +46,9 @@ def optimize(X_val, y_val):
     best_score = 0
     n = 0
     
-    for c, k, g in iterools.product(C_temp, kernel_temp, gamma_temp):
-        model = SVC(C=c, kernel=C, gamma=g)
+    for c, k, g in itertools.product(C_temp, kernel_temp, gamma_temp):
+        model = SVC(C=c, kernel=k, gamma=g)
+        model.fit(X_train_std, y_train)
         acc_score = compute_acc(model, X_val, y_val)
         print(f"Score for current model: {acc_score}")
         if not best_hyper or acc_score > best_score:
@@ -67,7 +62,7 @@ def optimize(X_val, y_val):
     return best_hyper
 
 
-def print_metrics(acc_score, mb_size, latency_dict):
+def print_metrics(acc_score, mb_size, latency_dict, f):
     """
     Helper function to print evaluation metrics.
 
@@ -84,17 +79,17 @@ def print_metrics(acc_score, mb_size, latency_dict):
     Returns:
         None
     """
-    print(f"Accuracy Score:{acc_score}")
-    print(f"File size (MB): {mb_size}")
-    print(f"Mean Latency: {latency_dict['mean_ms']}")
-    print(f"Latency stdev: {latency_dict['std_ms']}")
-    print(f"Min Latency: {latency_dict['min_ms']}")
-    print(f"Max Latency: {latency_dict['max_ms']}")
-    print(f"Sampled {latency_dict['n_repeats']} times.")
+    print(f"Accuracy Score:{acc_score}", file=f)
+    print(f"File size (MB): {mb_size}", file=f)
+    print(f"Mean Latency: {latency_dict['mean_ms']}", file=f)
+    print(f"Latency stdev: {latency_dict['std_ms']}", file=f)
+    print(f"Min Latency: {latency_dict['min_ms']}", file=f)
+    print(f"Max Latency: {latency_dict['max_ms']}", file=f)
+    print(f"Sampled {latency_dict['n_repeats']} times.",file=f)
 
 def save_metrics(model, X, y):
     """
-    Saves evaluation metrics to file. File should be log.txt, located in cwd.
+    Saves evaluation metrics to output/log.txt.
 
     Args:
         model: Machine learning model used for prediction. 
@@ -113,12 +108,12 @@ def save_metrics(model, X, y):
     acc_score = compute_acc(model, X, y)
     mb_size = metrics.measure_model_size_mb(model=model, kind="sklearn")
     latency_dict = metrics.measure_inference_latency_ms()
-    with open("log.txt", 'w') as file:
-         print_metrics(acc_score, mb_size, latency_dict)
+    with open("log.txt", 'w') as f:
+        print_metrics(acc_score, mb_size, latency_dict, file=f)
 
 def save_model(model):
     """
-    Saves model as a pickle file.
+    Saves model as a pickle file to output/model.pkl.
 
     Args:
         model: Machine learning model used for prediction. 
@@ -133,47 +128,44 @@ def save_model(model):
     pkl_model_filename = "model.pkl"
     pickle.dump(model, open(pkl_model_filename, 'wb'))
 
-    
-def condense_window(splits):
-    """
-    Condenses window to 12-monitoring features.
-    args:
-        splits: 
-            dict like {"train": (X_train, y_train), "val": (X_val, y_val), "test": (X_test, y_test)}
-    returns:
-        None
-    """
-    
-
-
 def main():
-    splits = data.load_all_splits()
-    condense_window(splits)
-    X_train, y_train = splits["train"]
-    X_val, y_val = splits["val"]
-    X_test, y_test = splits["test"]
-    X_train_std, X_val_std, X_test_std = data.standardize(X_train, X_val, X_test)
-    print("Preprocessing complete. Optimizing hyperparameters")
-    best = optimize(X_val_std, y_val)
+    """
+    Performs the following, in order.
+    Reads 12 condition monitoring features dataset.
+    Preprocesses Data.
+    Optimizes hyperparameters
+    Evaluates best hyperparametered model. Saved in output/log.txt.
+    Saves model. Saved in output/model.pkl.
+    """
+    df_train = pd.read_csv("../data/train.csv")
+    df_val = pd.read_csv("../data/val.csv")
+    df_test = pd.read_csv("../data/test.csv")
+    features = [] # TODO
+    X_train, y_train = df_train(columns=features), df_train['Fault']
+    X_val, y_val = df_val(columns=features), df_train['Fault']
+    X_test, y_test = df_test(columns=features), df_train['Fault']
 
-    print("Hyper parameters optimized. Creating testing model...)
+    X_train_std, X_val_std, X_test_std = data.standardize(X_train, X_val, X_test)
+    print("Preprocessing complete. Optimizing hyperparameters...")
+    optimize(X_train_std, y_train, X_val_std, y_val)
+    best = optimize(model, X_val_std, y_val)
+
+    print("Hyper parameters optimized. Creating testing model...")
     model = SVC(C=best[0], kernel=best[1], gamma=best[2])
 
     print("Model Created. Saving Evaluation Metrics...")
     save_metrics(model, X_test_std, y_test)
+
     print("Saved. Saving Model...")
     save_model()
+
     print("Creating output directory...")
     subprocess.run("mkdir output", shell=True)
     subprocess.run("mv model.pkl output", shell=True)
     subprocess.run("mv log.txt output", shell=True)
+
     print("Done. Check output folder for model and log.txt")
     
-
-
-
-
-
 if __name__ == '__main__':
     main()
 

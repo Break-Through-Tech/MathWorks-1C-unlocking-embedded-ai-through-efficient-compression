@@ -1,0 +1,9 @@
+build_features.py builds 12 condition-monitoring features (RMS, kurtosis, crest factor, etc.) per window.
+build_model.py finds the optimal hyperparameters. Saves model and model evaluation.
+
+Lingering thoughts:
+
+What are ALL 12 features?
+Need to  currently written functions
+Fix docstrings
+Implement verbose option/other shell options (save model, save evaluation)?

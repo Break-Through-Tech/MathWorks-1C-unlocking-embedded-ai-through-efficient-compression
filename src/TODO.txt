@@ -1,4 +1,0 @@
-What are the 12 features?!
-Debugging currently written functions
-Implement verbose option/other shell options?
-Fix docstrings
