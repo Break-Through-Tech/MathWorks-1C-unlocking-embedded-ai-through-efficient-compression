@@ -140,21 +140,21 @@ def main():
     df_train = pd.read_csv("../data/train.csv")
     df_val = pd.read_csv("../data/val.csv")
     df_test = pd.read_csv("../data/test.csv")
-    features = [] # TODO
+    features = ['rms_time', 'kurtosis_time', 'stdev_time', 'rms_four','kurtosis_four', 'stdev_four',
+                'rms_spec', 'kurtosis_spec','stdev_spec','rms_psd', 'kurtosis_psd','stdev_psd' ]
     X_train, y_train = df_train(columns=features), df_train['Fault']
-    X_val, y_val = df_val(columns=features), df_train['Fault']
-    X_test, y_test = df_test(columns=features), df_train['Fault']
+    X_val, y_val = df_val(columns=features), df_val['Fault']
+    X_test, y_test = df_test(columns=features), df_test['Fault']
 
-    X_train_std, X_val_std, X_test_std = data.standardize(X_train, X_val, X_test)
     print("Preprocessing complete. Optimizing hyperparameters...")
-    optimize(X_train_std, y_train, X_val_std, y_val)
-    best = optimize(model, X_val_std, y_val)
+    optimize(X_train, y_train, X_val, y_val)
+    best = optimize(model, X_val, y_val)
 
     print("Hyper parameters optimized. Creating testing model...")
     model = SVC(C=best[0], kernel=best[1], gamma=best[2])
 
     print("Model Created. Saving Evaluation Metrics...")
-    save_metrics(model, X_test_std, y_test)
+    save_metrics(model, X_test, y_test)
 
     print("Saved. Saving Model...")
     save_model()

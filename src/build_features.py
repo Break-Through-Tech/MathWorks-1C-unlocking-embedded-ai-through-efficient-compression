@@ -1,9 +1,17 @@
 """Creates 12 condition-monitoring features (RMS, kurtosis, crest factor, etc.) per window."""
 import pandas as pd
 import data
-def extract_features(X):
+import numpy as np
+from scipy.fft import rfft
+from scipy.signal import spectrogram, welch
+from scipy.stats import kurtosis
+
+FS = 48858
+N = 5000
+
+def extract_features(X_train, X_val, X_test):
     """
-    Extracts the 12 features. More Specifically: TODO
+    Extracts the 12 features. More Specifically:
     Args:
         X: Input data, as Numpy array.
 
@@ -15,13 +23,43 @@ def extract_features(X):
         [ mean...        , std...        ,  ...],
         [ mean(example_n), std(example_n),  ...]]
     """
-    ret = []
-    n = len(X)
-    for i in range(n):
-        example = []
-        # TODO determine which features will be used, compute them in this loop, per example.
-        ret.append(example)
-    return ret
+    
+    extracted = []
+    X_train_std, X_val_std, X_test_std = data.standardize(X_train, X_val, X_test)
+    X = [X_train_std, X_val_std, X_test_std]
+    for dataset in X:
+        #Features:
+        #time-domain signal, fourier-domain signal, spectrogram, PSD
+        #obtain RMS, kurtosis, stdev for each plot.
+        ret = []
+        for example in dataset:
+            #spectrogram
+            _, _, Sxx = spectrogram(example, fs=FS, nperseg=256)
+            # FFT:
+            fd_signal = np.abs(rfft(example))
+            #PSD
+            _, Pxx = welch(example, fs=FS)
+
+            rms_time = np.sqrt(np.mean(example**2))
+            kurtosis_time = kurtosis(example)
+            stdev_time = np.std(example)
+
+            rms_four = np.sqrt(np.mean(fd_signal**2))
+            kurtosis_four = kurtosis(fd_signal)
+            stdev_four = np.std(fd_signal)
+
+            rms_spec = np.sqrt(np.mean(Sxx**2))
+            kurtosis_spec = kurtosis(Sxx.ravel())
+            stdev_spec = np.std(Sxx)
+
+            rms_psd = np.sqrt(np.mean(Pxx**2))
+            kurtosis_psd = kurtosis(Pxx.ravel())
+            stdev_psd = np.std(Pxx)
+            ret.append([rms_time, kurtosis_time, stdev_time, rms_four, kurtosis_four, stdev_four, rms_spec, kurtosis_spec, 
+                        stdev_spec, rms_psd, kurtosis_psd, stdev_psd])
+        extracted.append(ret)
+
+    return extracted
     
 def condense_window(splits):
     """
@@ -35,45 +73,33 @@ def condense_window(splits):
     For single file, n examples: 
         Turns (n, 5000) -> (n, 12). 
         Then appends (DataFrame, Series) to final output.
-    Repeat for each file. Consequently returns [df_train, df_val, df_test]
-    
-    Unsure of what features we want to use.
-    I presume that they all related to statistical measures of the data. 
-
-    This function begins from correct extraction 
-    of features stored in 'features' and feature values per example.    
+    Repeat for each file. Consequently returns [df_train, df_val, df_test]  
     """
     ret = []
-    #this will vary by train, val, test
-    for elem in splits.keys():
 
-        # Obtain 12 condition-monitoring features
-        X = pd.DataFrame(extract_features(splits[elem][0]))       
-        # Getting y
-        y = pd.Series(data._clean_labels(splits[elem][1]))
-        
-        # Append (DataFrame, Series) to final output.
-        ret.append((X, y))
-        
+    X_train, y_train = splits['train']
+    X_val, y_val = splits['val']
+    X_test, y_test = splits['test']
+
+    X = extract_features(X_train, X_val, X_test) 
+    ret.append((X[0], y_train, 'train.csv'))
+    ret.append((X[1], y_val, 'val.csv'))
+    ret.append((X[2], y_test, 'test.csv'))
     return ret
 
 folder = '../data'
 
 def augment_and_print(dataset):
-    #TODO: Features
-    X_features = [str(n) for n in range(11)]
-    X_label = ['something']
+    X_features = ['rms_time', 'kurtosis_time', 'stdev_time', 'rms_four','kurtosis_four', 'stdev_four',
+                   'rms_spec', 'kurtosis_spec','stdev_spec','rms_psd', 'kurtosis_psd','stdev_psd' ]
     df_X = pd.DataFrame(dataset[0], columns=X_features)
-    df_y = pd.DataFrame(dataset[1], columns=X_label)
-    df = pd.concat([df_X, df_y], ignore_index=True)
+    df_y = pd.DataFrame(dataset[1], columns=['Fault'])
+    df = pd.concat([df_X, df_y], axis=1)
     df.to_csv(f"{folder}/{dataset[2]}", index=False)
 
 def main():
     splits = data.load_all_splits()
     d = condense_window(splits)
-    d[0].append('train.csv')
-    d[1].append('val.csv')
-    d[2].append('test.csv')
     for dataset in d:    
         augment_and_print(dataset)
 

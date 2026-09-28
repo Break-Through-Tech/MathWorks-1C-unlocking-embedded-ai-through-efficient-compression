@@ -1,0 +1,62 @@
+build_features.py builds 12 condition-monitoring features (RMS, kurtosis, crest factor, etc.) per window.
+build_model.py finds the optimal hyperparameters. Saves model and model evaluation, in 'output' directory.
+(Saves .pkl, and 3 eval metrics in a txt)
+
+Lingering thoughts:
+
+Need to  currently written functions
+Fix docstrings
+Implement verbose option/other shell options (save model, save evaluation)?
+
+
+I think now, the goal is to research what values may be useful from these core concepts
+of signal processing.
+
+Justifying feature extraction for baseline model:
+
+
+https://pmc.ncbi.nlm.nih.gov/articles/PMC8914793/ - 2. Feature Extraction
+Note how the model was successful with Time-domain signal, Fourier-domain signal, and Power Spectral Density.
+Farheeen recommended the spectrogram, since normal and OuterRaceFault appears identical 
+in the raw waveforms from the data collected.
+I will build the model from those four plots.
+
+The contending features:
+mean value, standard deviation, skewness, kurtosis, second derivative, crest factor, RMS
+
+Ideally we want to avoid reundancies, or features with low predictive power.
+
+Because we are using a population standard deviation:
+RMS ** 2 = mean ** 2 + std ** 2.
+This means RMS is redundant with mean and std.
+Since Crest factor = peak/RMS
+Peak is susceptible to various sensitivities (outlier, measurement), we will not include it.
+This makes Crest Factor is partially redundant with RMS.
+However, since RMS already retains a measure of mean and std, we'll use RMS to retain a measure of Crest factor as well.
+
+(Imagine these are is a waveforms at a certain frequency, plotted over some time domain)
+
+Skewness cannot distinguish
+ | | |
+-|-|-|-
+ | | |
+from 
+ |    |
+-|----|-
+ |    |
+They both have skewness 0.
+It's possible the geometry from the bearing suggests:
+Waveform1 is a fault, Waveform2 is not a fault.
+Meaning skewness(Waveform1) == skewness(Waveform2).
+But their pred(Waveform1) != pred(Waveform2).
+This same idea can be generalized to waveforms with similar amplitude distributions,
+as they obtain no meaningful information from a measure of skewness.
+
+That argument is why I'm not using skewness as a feature.
+
+Leaving just:
+RMS
+Kurtosis
+Standard Deviation
+for each plot. 
+
