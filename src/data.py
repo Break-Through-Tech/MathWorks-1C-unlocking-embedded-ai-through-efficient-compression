@@ -214,6 +214,33 @@ def standardize(
         raise ValueError(f"Unknown method: {method!r}")
 
 
+def _time_shift(signal: np.ndarray, rng: np.random.Generator,
+                max_shift: int = 500) -> np.ndarray:
+    """Circularly shift a signal by a random amount in [-max_shift, +max_shift].
+
+    Bearing faults are periodic, so where the first impact lands in
+    the window is arbitrary.  A circular roll changes nothing about
+    the signal's amplitude, RMS, or frequency content — it just
+    moves the starting point.
+    """
+    shift = rng.integers(-max_shift, max_shift + 1)
+    return np.roll(signal, shift)
+
+
+def _add_noise(signal: np.ndarray, rng: np.random.Generator,
+               snr_db: float = 20.0) -> np.ndarray:
+    """Add Gaussian white noise at a controlled signal-to-noise ratio (dB).
+
+    At 20 dB the noise power is 100× smaller than the signal power,
+    which simulates a slightly noisier sensor without distorting the
+    waveform shape or fingerprint metrics (RMS, peak, crest, kurtosis).
+    """
+    sig_power = np.mean(signal ** 2)
+    noise_power = sig_power / (10.0 ** (snr_db / 10.0))
+    noise = rng.normal(0.0, np.sqrt(noise_power), size=signal.shape)
+    return signal + noise
+
+
 def augment(
     X: np.ndarray,
     y: np.ndarray,
@@ -222,17 +249,35 @@ def augment(
     """
     Apply data augmentation to training data.
 
-    *** PLACEHOLDER — to be filled in with Person 2's findings. ***
-    This hook exists so the pipeline has one obvious, agreed-upon place to
-    plug in augmentation once Person 2 determines what works for vibration
-    signal data (e.g. jitter/noise injection, time-shift, scaling, etc.).
+    Based on the augmentation study in notebook 2 (Task 2, Person 2):
 
-    IMPORTANT: only ever call this on the TRAINING split. Never augment
+    Two augmentations are applied. Each original window produces two
+    new copies — one time-shifted and one with injected noise — so
+    the returned arrays are 3× larger than the inputs (originals +
+    shifted copies + noisy copies).
+
+    Approved augmentations and their parameters:
+      - Time shift (circular roll, max_shift=500 samples): bearing
+        faults are periodic, so the starting point is arbitrary.
+        Fingerprint metrics are perfectly unchanged.
+      - Noise injection (SNR = 20 dB): simulates a noisier sensor.
+        Signal power stays ~100× above the noise, preserving class
+        identity.
+
+    Amplitude scaling was REJECTED: Gurbaj's standardization study
+    (Task 5) showed amplitude is a primary class discriminator.
+    Scaling a Normal window up can push its RMS into InnerRaceFault
+    territory while the label still says "Normal."
+
+    IMPORTANT: we only ever call this on the TRAINING split. Never augment
     val or test data — that would corrupt evaluation.
 
     Parameters
     ----------
-    X, y : the training data/labels to augment.
+    X : np.ndarray, shape (n_samples, 5000)
+        Training signal windows.
+    y : np.ndarray, shape (n_samples,)
+        Corresponding labels.
     seed : int
         Fixes the random state so augmentation is reproducible across runs
         and across teammates. Always pass an explicit seed when calling
@@ -240,13 +285,25 @@ def augment(
 
     Returns
     -------
-    (X_augmented, y_augmented) — currently a no-op passthrough returning
-    X, y unchanged. Replace the body once Person 2's method is decided.
+    (X_augmented, y_augmented) with shape (3 * n_samples, 5000) and
+    (3 * n_samples,).  The first n_samples rows are the originals,
+    the next n_samples are time-shifted copies, and the last n_samples
+    are noisy copies.
     """
-    rng = np.random.default_rng(seed)  # noqa: F841 -- reserved for future use
+    rng = np.random.default_rng(seed)
 
-    # --- No-op until Person 2's augmentation method is plugged in here ---
-    X_augmented, y_augmented = X, y
+    n = X.shape[0]
+
+    # Pre-allocate: originals + shifted + noisy
+    X_shifted = np.empty_like(X)
+    X_noisy = np.empty_like(X)
+
+    for i in range(n):
+        X_shifted[i] = _time_shift(X[i], rng, max_shift=500)
+        X_noisy[i] = _add_noise(X[i], rng, snr_db=20.0)
+
+    X_augmented = np.concatenate([X, X_shifted, X_noisy], axis=0)
+    y_augmented = np.concatenate([y, y, y], axis=0)
 
     return X_augmented, y_augmented
 
