@@ -264,10 +264,12 @@ def augment(
         Signal power stays ~100× above the noise, preserving class
         identity.
 
-    Amplitude scaling was REJECTED: Gurbaj's standardization study
-    (Task 5) showed amplitude is a primary class discriminator.
-    Scaling a Normal window up can push its RMS into InnerRaceFault
-    territory while the label still says "Normal."
+    Amplitude scaling was REJECTED: amplitude is part of what separates
+    the classes, so scaling attacks the signal we most need to keep.
+    Normal and OuterRaceFault RMS medians differ by only ~15% and already
+    overlap ~31%; scaling by ±30% raises that to ~39% (see notebook 2,
+    class-overlap check). Normal vs InnerRaceFault is not at risk (0%
+    overlap at every setting tested). If ever required, cap at ±5%.
 
     IMPORTANT: we only ever call this on the TRAINING split. Never augment
     val or test data — that would corrupt evaluation.
