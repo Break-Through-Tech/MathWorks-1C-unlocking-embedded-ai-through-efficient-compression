@@ -1,0 +1,1 @@
+experiment_id,date,author,model,input_repr,standardization,augmentation,compression,accuracy_test,model_size_mb,latency_ms_per_sample,notes
