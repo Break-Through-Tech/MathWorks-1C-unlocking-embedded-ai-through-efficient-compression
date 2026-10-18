@@ -1,0 +1,4 @@
+finally got the svm model fixed
+I moved some things around to make it easier to include custom implementations,
+using the baseline pipeline as inspiration.
+Let me know if you have any other questions, or need help with other tasks...

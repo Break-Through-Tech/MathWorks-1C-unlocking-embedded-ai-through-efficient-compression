@@ -140,6 +140,7 @@ def load_split(
 
 
 def load_all_splits(
+    
     data_dir: str | Path = "data",
 ) -> dict[Split, tuple[np.ndarray, np.ndarray]]:
     """
@@ -149,6 +150,7 @@ def load_all_splits(
     -------
     dict like {"train": (X_train, y_train), "val": (X_val, y_val), "test": (X_test, y_test)}
     """
+    print(data_dir)
     return {split: load_split(split, data_dir=data_dir) for split in ("train", "val", "test")}
 
 
