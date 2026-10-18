@@ -1,11 +1,12 @@
 """Creates the baseline model."""
 
 import data
-from sklearn import SVC
+import os
+from sklearn.svm import SVC
 import itertools
 import metrics
-import subprocess
 import pandas as pd
+import pickle
 
 def compute_acc(model, X, y) -> float:
     """
@@ -24,6 +25,7 @@ def compute_acc(model, X, y) -> float:
 
 def optimize(X_train_std, y_train, X_val, y_val):
     """
+    fix docstring
     Finds the best configuration of hyperparameters.
 
     Args:
@@ -33,14 +35,11 @@ def optimize(X_train_std, y_train, X_val, y_val):
     Returns:
         Best hyper parameters for SVM in the format:
             [C, kernel, gamma]
-
-        Currently supported optimizations: C, kernel, gamma.
-        I was struggling to understand where GridSearch might come into play.
-        Maybe actual for the Machine Learning Algorithm. Please let me know.
     """
     C_temp = [10 ** n for n in range(-5, 6)]
-    kernel_temp = ['linear', 'poly', 'rbf', 'sigmoid', 'precomputed']
+    kernel_temp = ['linear', 'poly', 'rbf', 'sigmoid']
     gamma_temp = ['scale', 'auto']
+    total = len(C_temp) * len(kernel_temp) * len(gamma_temp)
 
     best_hyper = []
     best_score = 0
@@ -56,7 +55,7 @@ def optimize(X_train_std, y_train, X_val, y_val):
             best_hyper = [c, k, g]
         n+=1
         print(f"Best current model score: {best_score}.\n"
-                f"{n} models trained. {100 - n} to go.")
+                f"{n} models trained. {total - n} to go.")
     print(f"Best model found: C, kernel, gamma = {best_hyper[0], best_hyper[1], best_hyper[2]}")
 
     return best_hyper
@@ -107,9 +106,9 @@ def save_metrics(model, X, y):
     """
     acc_score = compute_acc(model, X, y)
     mb_size = metrics.measure_model_size_mb(model=model, kind="sklearn")
-    latency_dict = metrics.measure_inference_latency_ms()
+    latency_dict = metrics.measure_inference_latency_ms(model.predict, X)
     with open("log.txt", 'w') as f:
-        print_metrics(acc_score, mb_size, latency_dict, file=f)
+        print_metrics(acc_score, mb_size, latency_dict, f)
 
 def save_model(model):
     """
@@ -124,12 +123,13 @@ def save_model(model):
     Creates:
         Pickle file. Stored as model.pkl. 
     """
-    import pickle
     pkl_model_filename = "model.pkl"
-    pickle.dump(model, open(pkl_model_filename, 'wb'))
+    with open(pkl_model_filename, "wb") as f:
+        pickle.dump(model, f)
 
 def main():
     """
+    fix docstring
     Performs the following, in order.
     Reads 12 condition monitoring features dataset.
     Preprocesses Data.
@@ -142,27 +142,27 @@ def main():
     df_test = pd.read_csv("../data/test.csv")
     features = ['rms_time', 'kurtosis_time', 'stdev_time', 'rms_four','kurtosis_four', 'stdev_four',
                 'rms_spec', 'kurtosis_spec','stdev_spec','rms_psd', 'kurtosis_psd','stdev_psd' ]
-    X_train, y_train = df_train(columns=features), df_train['Fault']
-    X_val, y_val = df_val(columns=features), df_val['Fault']
-    X_test, y_test = df_test(columns=features), df_test['Fault']
 
+    # these are standardized in the .csv from build_features.py, do not repeat.
+    X_train, y_train = df_train[features], df_train['Fault']
+    X_val, y_val = df_val[features], df_val['Fault']
+    X_test, y_test = df_test[features], df_test['Fault']
     print("Preprocessing complete. Optimizing hyperparameters...")
-    optimize(X_train, y_train, X_val, y_val)
-    best = optimize(model, X_val, y_val)
+    C, K, G =  optimize(X_train, y_train, X_val, y_val)
 
     print("Hyper parameters optimized. Creating testing model...")
-    model = SVC(C=best[0], kernel=best[1], gamma=best[2])
-
+    model = SVC(C=C, kernel=K, gamma=G)
+    model.fit(X_train, y_train)
     print("Model Created. Saving Evaluation Metrics...")
     save_metrics(model, X_test, y_test)
 
     print("Saved. Saving Model...")
-    save_model()
+    save_model(model=model)
 
     print("Creating output directory...")
-    subprocess.run("mkdir output", shell=True)
-    subprocess.run("mv model.pkl output", shell=True)
-    subprocess.run("mv log.txt output", shell=True)
+    os.makedirs("output", exist_ok=True)
+    os.replace("model.pkl", "output/model.pkl")
+    os.replace("log.txt", "output/log.txt")
 
     print("Done. Check output folder for model and log.txt")
     

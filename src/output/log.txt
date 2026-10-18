@@ -1,0 +1,7 @@
+Accuracy Score:0.9803921568627451
+File size (MB): 0.00496
+Mean Latency: 0.18426913033181336
+Latency stdev: 0.02489686414959733
+Min Latency: 0.1720000000204891
+Max Latency: 0.34004200279014185
+Sampled 100 times.

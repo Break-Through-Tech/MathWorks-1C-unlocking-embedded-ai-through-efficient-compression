@@ -8,10 +8,6 @@ Need to  currently written functions
 Fix docstrings
 Implement verbose option/other shell options (save model, save evaluation)?
 
-
-I think now, the goal is to research what values may be useful from these core concepts
-of signal processing.
-
 Justifying feature extraction for baseline model:
 
 
