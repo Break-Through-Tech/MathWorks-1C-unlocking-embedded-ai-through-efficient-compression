@@ -6,7 +6,7 @@ from scipy.fft import rfft
 from scipy.signal import spectrogram, welch
 from scipy.stats import kurtosis
 
-FS = 48858
+FS = 48828
 N = 5000
 
 def extract_features(X_train, X_val, X_test):
@@ -98,7 +98,7 @@ def augment_and_print(dataset):
     df.to_csv(f"{folder}/{dataset[2]}", index=False)
 
 def main():
-    splits = data.load_all_splits()
+    splits = data.load_all_splits('../data')
     d = condense_window(splits)
     for dataset in d:    
         augment_and_print(dataset)
