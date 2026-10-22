@@ -1,9 +1,9 @@
 Accuracy Score:0.9803921568627451
 File size (MB): 0.00496
-Mean Latency: 0.1783166599852848
-Latency stdev: 0.021728853205779438
-Min Latency: 0.1688330012257211
-Max Latency: 0.3783329993893858
+Mean Latency: 0.17529794007714372
+Latency stdev: 0.005384139656242258
+Min Latency: 0.17033400217769668
+Max Latency: 0.21249999917927198
 Sampled 100 times.
 Optimal hyperparameter C: 1e-05
 Optimal hyperparameter Kernel: poly

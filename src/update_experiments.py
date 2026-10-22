@@ -168,10 +168,13 @@ elif sys.argv[1] == 'save':
     df.to_csv('../results/experiments.csv', index=False)
     print(f"Experiment {exp_id} saved successfully!")
 elif sys.argv[1] == 'remove':
-    df = pd.read_csv("../results/experiments.csv")
-    df = df.iloc[:-1] 
-    df.to_csv("../results/experiments.csv", index=False)
-    print(f"Experiment {exp_id} removed successfully!")
+    if exp_id != 1:
+        df = pd.read_csv("../results/experiments.csv")
+        df = df.iloc[:-1] 
+        df.to_csv("../results/experiments.csv", index=False)
+        print(f"Experiment {exp_id} removed successfully!")
+    else:
+        print('You are trying to remove the baseline experiment. Remove the if else (~line 170) if you truly intend that.')
 else:
     print('Please supply the correct argument for this program (review update_experiments.py lines 32-36) for guidance.')
     

@@ -5,4 +5,4 @@ Features: ['rms_time', 'kurtosis_time', 'stdev_time', 'rms_four','kurtosis_four'
 Standardization: Global z-score
 Augmentation: None
 Compression: None
-Notes: Testing for some other functionalities (Still Baseline)
+Notes: ACTUAL BASELINE

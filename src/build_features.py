@@ -9,7 +9,7 @@ from scipy.stats import kurtosis
 FS = 48828
 N = 5000
 
-def extract_features(X_train, X_val, X_test):
+def extract_features(X_train_orig, X_train_time, X_train_noisy, X_val, X_test):
     """
     Extracts the 12 features. More Specifically:
     Args:
@@ -25,8 +25,12 @@ def extract_features(X_train, X_val, X_test):
     """
     
     extracted = []
-    X_train_std, X_val_std, X_test_std = data.standardize(X_train, X_val, X_test)
-    X = [X_train_std, X_val_std, X_test_std]
+    X_train_orig_std, X_train_time_std, X_train_noisy_std, X_val_std, X_test_std = data.standardize(
+        X_train_orig, X_train_time, X_train_noisy, X_val, X_test
+    )
+    
+
+    X = [X_train_orig_std, X_train_time_std, X_train_noisy_std, X_val_std, X_test_std]
     for dataset in X:
         #Features:
         #time-domain signal, fourier-domain signal, spectrogram, PSD
@@ -80,11 +84,19 @@ def condense_window(splits):
     X_train, y_train = splits['train']
     X_val, y_val = splits['val']
     X_test, y_test = splits['test']
+    X_aug, y_aug = data.augment(
+        X_train,
+        y_train,
+        seed=42 
+    )
+    i = y_train.shape[0] # partitions
+    X = extract_features(X_aug[0:i], X_aug[i:2*i], X_aug[2*i:3*i], X_val, X_test)
 
-    X = extract_features(X_train, X_val, X_test) 
-    ret.append((X[0], y_train, 'train.csv'))
-    ret.append((X[1], y_val, 'val.csv'))
-    ret.append((X[2], y_test, 'test.csv'))
+    ret.append((X[0], y_aug[0:i], 'train.csv'))
+    ret.append((X[1], y_aug[i:2*i], 'train_time.csv'))
+    ret.append((X[2], y_aug[2*i:3*i], 'train_noisy.csv'))
+    ret.append((X[3], y_val, 'val.csv'))
+    ret.append((X[4], y_test, 'test.csv'))
     return ret
 
 folder = '../data'
