@@ -1,1 +1,3 @@
 experiment_id,date,author,model,input_repr,standardization,augmentation,compression,accuracy_test,model_size_mb,latency_ms_per_sample,notes
+0,10/21/2026,Tule Achor,SVM,"['rms_time', 'kurtosis_time', 'stdev_time', 'rms_four','kurtosis_four', 'stdev_four', 'rms_spec', 'kurtosis_spec','stdev_spec','rms_psd', 'kurtosis_psd','stdev_psd']",Global z-score,,,0.9803921568627452,0.00496,0.1752979400771437,"ACTUAL BASELINE
+"

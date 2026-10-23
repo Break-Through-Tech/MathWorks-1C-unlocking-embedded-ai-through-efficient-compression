@@ -1,0 +1,8 @@
+Author: Tule Achor
+Date: 10/21/2026
+Model: SVM
+Features: ['rms_time', 'kurtosis_time', 'stdev_time', 'rms_four','kurtosis_four', 'stdev_four', 'rms_spec', 'kurtosis_spec','stdev_spec','rms_psd', 'kurtosis_psd','stdev_psd']
+Standardization: Global z-score
+Augmentation: None
+Compression: None
+Notes: ACTUAL BASELINE
