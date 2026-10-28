@@ -29,6 +29,7 @@ Usage (from the repository root):
 """
 
 import argparse
+import copy
 from pathlib import Path
 
 import numpy as np
@@ -43,6 +44,9 @@ from src.cnn_1D.cnn_train import evaluate, prepare_data, set_seed
 
 DEFAULT_CHECKPOINT = Path("cnn_outputs/cnn_rough_seed42.pth")
 BATCH_SIZE = 32
+SEED = 42
+FINETUNE_EPOCHS = 15
+FINETUNE_LR = 1e-4
 
 
 def load_baseline(checkpoint_path, device):
@@ -138,6 +142,71 @@ def sparsity_report(model):
     return overall
 
 
+def finetune(model, checkpoint, epochs, lr, device):
+    """
+    Briefly retrain the pruned model on the clean training split.
+
+    The pruning masks stay attached, so pruned weights are pinned at
+    zero while the surviving weights adapt. The epoch with the lowest
+    validation loss is restored at the end — the same selection rule
+    as the baseline training, and never based on test data.
+    """
+    mean = checkpoint["train_mean"]
+    std = checkpoint["train_std"]
+
+    X_train, y_train = load_split("train")
+    X_val, y_val = load_split("val")
+
+    generator = torch.Generator().manual_seed(SEED)
+    train_loader = DataLoader(
+        prepare_data(X_train, y_train, mean, std),
+        batch_size=BATCH_SIZE, shuffle=True,
+        generator=generator, num_workers=0
+    )
+    val_loader = DataLoader(
+        prepare_data(X_val, y_val, mean, std),
+        batch_size=BATCH_SIZE, shuffle=False
+    )
+
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    criterion = nn.CrossEntropyLoss()
+
+    best_val_loss = float("inf")
+    best_epoch = None
+    best_state = None
+
+    for epoch in range(1, epochs + 1):
+        model.train()
+        for inputs, targets in train_loader:
+            inputs = inputs.to(device)
+            targets = targets.to(device)
+
+            optimizer.zero_grad()
+            logits = model(inputs)
+            loss = criterion(logits, targets)
+            loss.backward()
+            optimizer.step()
+
+        val_loss, val_acc = evaluate(model, val_loader, device)
+
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            best_epoch = epoch
+            best_state = copy.deepcopy(model.state_dict())
+
+        if epoch == 1 or epoch % 5 == 0:
+            print(
+                f"Fine-tune epoch {epoch:02d}/{epochs} | "
+                f"Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.2%}"
+            )
+
+    model.load_state_dict(best_state)
+    model.eval()
+    print(f"Restored best fine-tune epoch: {best_epoch} (val loss {best_val_loss:.4f})")
+
+    return model
+
+
 def build_eval_loaders(checkpoint, include_test=False):
     """Standardized DataLoaders using the checkpoint's saved statistics."""
     mean = checkpoint["train_mean"]
@@ -183,6 +252,18 @@ def parse_args(argv=None):
         "--level", type=float, required=True,
         help="Fraction of the model to remove, e.g. 0.25, 0.5, 0.75, 0.9"
     )
+    parser.add_argument(
+        "--epochs", type=int, default=FINETUNE_EPOCHS,
+        help=f"Fine-tuning epochs after pruning (default: {FINETUNE_EPOCHS})"
+    )
+    parser.add_argument(
+        "--lr", type=float, default=FINETUNE_LR,
+        help=f"Fine-tuning learning rate (default: {FINETUNE_LR})"
+    )
+    parser.add_argument(
+        "--no-finetune", action="store_true",
+        help="Skip the brief retraining step (for before/after comparisons)"
+    )
     args = parser.parse_args(argv)
 
     if not 0.0 < args.level < 1.0:
@@ -193,7 +274,7 @@ def parse_args(argv=None):
 
 def main(argv=None):
     args = parse_args(argv)
-    set_seed(42)
+    set_seed(SEED)
 
     device = torch.device("cpu")
     model, checkpoint = load_baseline(args.checkpoint, device)
@@ -211,6 +292,16 @@ def main(argv=None):
 
     val_loss, val_acc = evaluate(model, loaders["val"], device)
     print(f"\nAfter pruning (no fine-tune) | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.2%}")
+
+    if not args.no_finetune:
+        print(f"\nFine-tuning for {args.epochs} epochs at lr={args.lr}")
+        finetune(model, checkpoint, args.epochs, args.lr, device)
+
+        val_loss, val_acc = evaluate(model, loaders["val"], device)
+        print(f"\nAfter fine-tuning | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.2%}")
+
+        # Fine-tuning must not revive pruned weights.
+        sparsity_report(model)
 
 
 if __name__ == "__main__":
