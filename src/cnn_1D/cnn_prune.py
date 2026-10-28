@@ -30,6 +30,8 @@ Usage (from the repository root):
 
 import argparse
 import copy
+import tempfile
+import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -41,6 +43,7 @@ from torch.utils.data import DataLoader
 from src.data import load_split
 from src.cnn_1D.cnn_model import BearingCNN
 from src.cnn_1D.cnn_train import evaluate, prepare_data, set_seed
+from src.metrics import measure_inference_latency_ms, measure_model_size_mb
 
 DEFAULT_CHECKPOINT = Path("cnn_outputs/cnn_rough_seed42.pth")
 BATCH_SIZE = 32
@@ -207,6 +210,93 @@ def finetune(model, checkpoint, epochs, lr, device):
     return model
 
 
+def strip_masks(model):
+    """
+    Make the pruning permanent: fold each mask into its weight tensor
+    and remove the mask reparametrization. After this the model is a
+    plain BearingCNN whose pruned entries are literal zeros — same
+    tensor shapes, so the saved file is NOT smaller (the point this
+    task has to demonstrate).
+    """
+    for module in model.modules():
+        for name in ("weight", "bias"):
+            if hasattr(module, f"{name}_mask"):
+                prune.remove(module, name)
+    return model
+
+
+def measure(model, loaders, device, eval_test=False):
+    """
+    Measure the four quantities issue #17 asks for, through the team's
+    shared src/metrics.py wherever it has a function for them:
+
+        accuracy (val always; test only with eval_test=True),
+        .pth file size, zipped .pth size, and ms/sample latency
+        at batch size 1 on a single CPU thread.
+    """
+    torch.set_num_threads(1)
+    model.eval()
+
+    results = {}
+
+    _, results["val_accuracy"] = evaluate(model, loaders["val"], device)
+    if eval_test:
+        _, results["test_accuracy"] = evaluate(model, loaders["test"], device)
+
+    results["size_mb"] = measure_model_size_mb(model=model, kind="pytorch")
+
+    # Zipped size: zeros compress well, so this is where mask-based
+    # pruning actually shows up as fewer bytes.
+    with tempfile.TemporaryDirectory() as tmp:
+        raw_path = Path(tmp) / "model.pth"
+        torch.save(model.state_dict(), raw_path)
+        zip_path = Path(tmp) / "model.zip"
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+            zf.write(raw_path, arcname="model.pth")
+        results["zipped_size_mb"] = zip_path.stat().st_size / 1_000_000
+
+    # Latency pool: the already-standardized validation windows.
+    X_pool = loaders["val"].dataset.tensors[0].numpy()
+
+    def predict_fn(x):
+        with torch.inference_mode():
+            return model(torch.from_numpy(x)).argmax(dim=1)
+
+    results["latency"] = measure_inference_latency_ms(predict_fn, X_pool)
+
+    return results
+
+
+def save_pruned_checkpoint(model, checkpoint, args, results, output_dir):
+    """
+    Save the stripped pruned model in the same checkpoint format as the
+    baseline (so the README's loading example works unchanged), plus
+    pruning metadata and the measured results.
+    """
+    run_name = f"{args.method}_{args.level * 100:g}pct"
+    run_dir = Path(output_dir) / run_name
+    run_dir.mkdir(parents=True, exist_ok=True)
+    out_path = run_dir / "checkpoint.pth"
+
+    torch.save({
+        "model_state_dict": model.state_dict(),
+        "seed": SEED,
+        "train_mean": checkpoint["train_mean"],
+        "train_std": checkpoint["train_std"],
+        "class_names": checkpoint["class_names"],
+        "augmentation": checkpoint.get("augmentation", "none"),
+        "torch_version": str(torch.__version__),
+        "pruning_method": args.method,
+        "pruning_level": args.level,
+        "finetune_epochs": 0 if args.no_finetune else args.epochs,
+        "finetune_lr": args.lr,
+        "baseline_checkpoint": str(args.checkpoint),
+        "results": results,
+    }, out_path)
+
+    return out_path
+
+
 def build_eval_loaders(checkpoint, include_test=False):
     """Standardized DataLoaders using the checkpoint's saved statistics."""
     mean = checkpoint["train_mean"]
@@ -264,6 +354,14 @@ def parse_args(argv=None):
         "--no-finetune", action="store_true",
         help="Skip the brief retraining step (for before/after comparisons)"
     )
+    parser.add_argument(
+        "--eval-test", action="store_true",
+        help="Also score the test split (final reporting only, never tuning)"
+    )
+    parser.add_argument(
+        "--output-dir", type=Path, default=Path("cnn_outputs/pruned"),
+        help="Where to save the pruned checkpoint (default: cnn_outputs/pruned)"
+    )
     args = parser.parse_args(argv)
 
     if not 0.0 < args.level < 1.0:
@@ -278,7 +376,7 @@ def main(argv=None):
 
     device = torch.device("cpu")
     model, checkpoint = load_baseline(args.checkpoint, device)
-    loaders = build_eval_loaders(checkpoint)
+    loaders = build_eval_loaders(checkpoint, include_test=args.eval_test)
 
     print("Checkpoint:", args.checkpoint)
     print("Method:", args.method)
@@ -302,6 +400,24 @@ def main(argv=None):
 
         # Fine-tuning must not revive pruned weights.
         sparsity_report(model)
+
+    strip_masks(model)
+    results = measure(model, loaders, device, eval_test=args.eval_test)
+    out_path = save_pruned_checkpoint(model, checkpoint, args, results, args.output_dir)
+
+    print("\n--- Results ---")
+    print(f"Pruned checkpoint: {out_path}")
+    print(f"Val accuracy: {results['val_accuracy']:.4f}")
+    if args.eval_test:
+        print(f"Test accuracy: {results['test_accuracy']:.4f}")
+    print(f"File size (MB): {results['size_mb']:.5f}")
+    print(f"Zipped size (MB): {results['zipped_size_mb']:.5f}")
+    latency = results["latency"]
+    print(
+        f"Latency ms/sample: mean {latency['mean_ms']:.4f} | "
+        f"std {latency['std_ms']:.4f} | min {latency['min_ms']:.4f} | "
+        f"max {latency['max_ms']:.4f} (n={latency['n_repeats']})"
+    )
 
 
 if __name__ == "__main__":
