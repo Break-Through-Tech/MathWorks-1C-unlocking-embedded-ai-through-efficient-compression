@@ -19,6 +19,7 @@ Saved model weights (`cnn_2d_spec.pth`) and training history (`cnn_2d_spec_histo
 | **SVM (Baseline)** | 98.04% (`0.980392`) | `0.004960` | `0.175298` |
 | **1D CNN (Raw Signal)** | 100.00% (`1.000000`) | `0.213313` | `1.352639` |
 | **2D CNN (Spectrogram)** | 96.08% (`0.960784`) | `0.038525` | `1.082752` |
+
 *Note: 2D CNN inference latency includes the per-sample STFT spectrogram computation overhead.*
 
 ## 3. Recommendation: Raw Signal vs. Spectrogram
