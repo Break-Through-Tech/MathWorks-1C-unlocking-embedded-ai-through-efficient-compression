@@ -48,11 +48,11 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 os.makedirs('cnn_outputs', exist_ok=True)
 epochs = 20
-best_val_acc = 0.0
+best_val_loss = float("inf") # CHANGED: Start at infinity so any loss is an improvement
 history = [] # Initialize list to track metrics
 
 for epoch in range(epochs):
-    # --- Training Phase ---
+    #Training Phase
     model.train() # Enables dropout/batchnorm if added later
     running_loss = 0.0
 
@@ -68,8 +68,9 @@ for epoch in range(epochs):
 
     epoch_loss = running_loss / len(train_loader.dataset)
 
-    # --- Validation Phase ---
+    # Validation Phase 
     model.eval() # Freezes model weights
+    running_val_loss = 0.0
     correct = 0
     total = 0
 
@@ -77,31 +78,40 @@ for epoch in range(epochs):
     with torch.no_grad():
         for inputs, labels in val_loader:
             outputs = model(inputs)
+            
+            # CHANGED: Calculate validation loss for this batch
+            val_batch_loss = criterion(outputs, labels)
+            running_val_loss += val_batch_loss.item() * inputs.size(0)
+            
             # Find the class index with the highest logit score
             _, predicted = torch.max(outputs, 1)
 
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
+    # CHANGED: Calculate average validation loss across the epoch
+    val_loss = running_val_loss / total
     val_acc = correct / total
 
     # Log metrics for this epoch
     history.append({
         'epoch': epoch + 1,
         'train_loss': epoch_loss,
+        'val_loss': val_loss, # Added val_loss tracking
         'val_accuracy': val_acc
     })
 
     # Checkpointing: Save only the model weights that perform best on unseen validation data
-    if val_acc > best_val_acc:
-        best_val_acc = val_acc
+    # CHANGED: Now saving when validation LOSS drops, allowing learning past 100% accuracy
+    if val_loss < best_val_loss:
+        best_val_loss = val_loss
         torch.save(model.state_dict(), 'cnn_outputs/cnn_2d_spec.pth')
 
-    print(f"Epoch {epoch+1:02d}/{epochs} | Train Loss: {epoch_loss:.4f} | Val Acc: {val_acc:.4f}")
+    print(f"Epoch {epoch+1:02d}/{epochs} | Train Loss: {epoch_loss:.4f} | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f}")
 
 # Save the training history to a CSV to match the team's workflow
 history_df = pd.DataFrame(history)
 history_df.to_csv('cnn_outputs/cnn_2d_spec_history.csv', index=False)
 
-print(f"\n Training complete. Best Validation Accuracy: {best_val_acc:.4f}")
+print(f"\n✅ Training complete. Best Validation Loss: {best_val_loss:.4f}")
 print("Saved model weights to 'cnn_outputs/cnn_2d_spec.pth' and metrics to 'cnn_outputs/cnn_2d_spec_history.csv'.")
