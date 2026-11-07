@@ -5,4 +5,4 @@ Features: ['rms_time', 'kurtosis_time', 'stdev_time', 'rms_four','kurtosis_four'
 Standardization: Global z-score
 Augmentation: None
 Compression: None
-Notes: ACTUAL BASELINE
+Notes: SVM baseline. C=1e-05 kernel=poly gamma=auto. First setting to score 27/27 on val. 37 other settings also scored 27/27 on val and some scored higher on test, because val has only 27 clips.
