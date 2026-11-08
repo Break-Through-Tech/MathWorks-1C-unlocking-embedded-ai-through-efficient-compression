@@ -1,4 +1,4 @@
-
+import argparse
 import csv
 import random
 from pathlib import Path
@@ -104,7 +104,19 @@ def evaluate(model, loader, device):
 
 
 def main():
-    set_seed(SEED)
+    parser = argparse.ArgumentParser(
+        description="Train a configurable 1D CNN without augmentation"
+    )
+    parser.add_argument(
+        "--channels", nargs=4, type=int,
+        default=[16, 32, 64, 96]
+    )
+    parser.add_argument("--dropout", type=float, default=0.20)
+    parser.add_argument("--lr", type=float, default=LEARNING_RATE)
+    parser.add_argument("--seed", type=int, default=SEED)
+    args = parser.parse_args()
+
+    set_seed(args.seed)
     OUTPUT_DIR.mkdir(exist_ok=True)
 
     device = torch.device(
@@ -128,7 +140,7 @@ def main():
     train_data = prepare_data(X_train, y_train, mean, std)
     val_data = prepare_data(X_val, y_val, mean, std)
 
-    generator = torch.Generator().manual_seed(SEED)
+    generator = torch.Generator().manual_seed(args.seed)
 
     train_loader = DataLoader(
         train_data,
@@ -150,11 +162,11 @@ def main():
         shuffle=False
     )
 
-    model = BearingCNN().to(device)
+    model = BearingCNN(channels=tuple(args.channels), dropout=args.dropout).to(device)
 
     optimizer = torch.optim.Adam(
         model.parameters(),
-        lr=LEARNING_RATE
+        lr=args.lr
     )
 
     criterion = nn.CrossEntropyLoss()
@@ -162,7 +174,7 @@ def main():
     # Fail before any training if this exact experiment already exists.
     checkpoint_path, history_path = reserve_run_paths(
         OUTPUT_DIR, model, optimizer,
-        seed=SEED, augmentation="none",
+        seed=args.seed, augmentation="none",
         batch_size=BATCH_SIZE, epochs=EPOCHS
     )
 
@@ -225,12 +237,14 @@ def main():
 
             torch.save({
                 "model_state_dict": model.state_dict(),
+                "channels": tuple(args.channels),
+                "dropout": args.dropout,
                 "epoch": epoch,
-                "seed": SEED,
+                "seed": args.seed,
                 "train_mean": mean,
                 "train_std": std,
                 "class_names": CLASS_NAMES,
-                "learning_rate": LEARNING_RATE,
+                "learning_rate": args.lr,
                 "batch_size": BATCH_SIZE,
                 "epoch_budget": EPOCHS,
                 "augmentation": "none",
@@ -265,7 +279,7 @@ def main():
         weights_only=True
     )
 
-    restored = BearingCNN().to(device)
+    restored = BearingCNN(channels=tuple(args.channels), dropout=args.dropout).to(device)
     restored.load_state_dict(checkpoint["model_state_dict"])
     restored.eval()
 

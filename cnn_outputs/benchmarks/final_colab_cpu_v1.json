@@ -1,0 +1,30 @@
+{
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "torch_version": "2.14.1+cpu",
+  "device": "CPU",
+  "threads": 1,
+  "timing_input": "raw validation windows",
+  "includes_preprocessing": true,
+  "warmup": 10,
+  "repetitions": 100,
+  "results": [
+    {
+      "name": "original_reference_seed42",
+      "seed": 42,
+      "parameters": 50819,
+      "model_size_mb": 0.214793,
+      "mean_latency_ms": 1.2507055400004674,
+      "std_latency_ms": 0.04844506651336894,
+      "artifact_sha256": "1fcfeb699ca03b9e39af90e82a3b810889a94c877125177c90a4b17b1cb85206"
+    },
+    {
+      "name": "micro_selected_seed1337",
+      "seed": 1337,
+      "parameters": 923,
+      "model_size_mb": 0.013641,
+      "mean_latency_ms": 0.7230283500021528,
+      "std_latency_ms": 0.26593469378643886,
+      "artifact_sha256": "94ba054cc1e8c6962250bb1ac74d67dbbb60769b96d1392191e2225bc7269c7c"
+    }
+  ]
+}

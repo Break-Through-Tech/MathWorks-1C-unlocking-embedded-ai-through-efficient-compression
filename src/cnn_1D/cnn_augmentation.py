@@ -19,11 +19,15 @@ class AugmentedTrainingDataset(Dataset):
     fixed clean-training global standardization.
     """
 
-    def __init__(self, X, y, mean, std, seed=42):
+    def __init__(self, X, y, mean, std, seed=42, mode="both"):
         self.X = np.asarray(X, dtype=np.float64)
         self.mean = float(mean)
         self.std = float(std)
         self.rng = np.random.default_rng(seed)
+        if mode not in ("shift", "noise", "both"):
+            raise ValueError("mode must be shift, noise, or both")
+
+        self.mode = mode
 
         label_map = {
             name: i for i, name in enumerate(CLASS_NAMES)
@@ -46,16 +50,15 @@ class AugmentedTrainingDataset(Dataset):
         signal = self.X[index].copy()
 
         # These helpers come from the team's shared data.py.
-        if self.rng.random() < 0.5:
+        if self.mode in ("shift", "both") and self.rng.random() < 0.5:
             signal = _time_shift(
                 signal, self.rng, max_shift=500
             )
 
-        if self.rng.random() < 0.5:
+        if self.mode in ("noise", "both") and self.rng.random() < 0.5:
             signal = _add_noise(
                 signal, self.rng, snr_db=20.0
             )
-
         # Always use original clean-training statistics.
         signal = np.ascontiguousarray(
             ((signal - self.mean) / self.std)[None, :],

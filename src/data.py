@@ -160,13 +160,12 @@ def standardize(
     """
     Standardize signal data before model training.
 
-    *** PLACEHOLDER — to be finalized with Person 5's conclusion. ***
-    The dataset docs confirm standardization is the one required
-    preprocessing step not already done in the .mat files. The exact
-    method (global z-score vs. per-sample z-score vs. something else,
-    and whether it's per-channel/per-feature) should be set based on
-    Person 5's analysis. Until then, this defaults to a standard,
-    reasonable choice: global z-score using train-set statistics only.
+    FINAL DECISION: global z-score ("zscore_global"), using train-set
+    statistics only. This is based on the standardization study in
+    notebooks/05_standardization_study.ipynb: global standardization keeps
+    the loudness (RMS / amplitude) differences between classes, while
+    per-sample standardization removes them. "zscore_global" is the default
+    and is what the whole team should use.
 
     Parameters
     ----------
@@ -183,7 +182,8 @@ def standardize(
         - "zscore_per_sample": each individual signal (row) is standardized
           using its own mean/std. Useful if different recordings have very
           different absolute amplitude/offset, but discards absolute
-          amplitude as a signal — discuss with Person 5 before using this.
+          amplitude as a signal — the standardization study found this
+          removes the class differences we need, so do not use it for models.
 
     Returns
     -------
