@@ -1,0 +1,16 @@
+architecture,seed,channels,parameters,validation_accuracy,inference_bundle_size_mb,mean_latency_ms,std_latency_ms,checkpoint,device,torch_threads,input,includes_preprocessing
+Original,42,"(16, 32, 64, 96)",50819,1.0,0.213569,1.5417250000064087,0.23507248171565345,cnn_outputs\cnn_rough_seed42.pth,CPU,1,raw 5000-sample window,True
+Original,1337,"(16, 32, 64, 96)",50819,1.0,0.213569,1.4369260000967188,0.028763037287520554,cnn_outputs\cnn_none_seed1337_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Original,2026,"(16, 32, 64, 96)",50819,1.0,0.213569,1.6644179999639164,0.38273196085656397,cnn_outputs\cnn_none_seed2026_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Medium,42,"(12, 24, 48, 72)",28803,1.0,0.125569,1.1857640000562242,0.1967975393822798,cnn_outputs\cnn_none_seed42_adam_lr0p001_bs32_ep60_m292b341a37_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Medium,1337,"(12, 24, 48, 72)",28803,1.0,0.125569,1.154564999978902,0.12051645320917465,cnn_outputs\cnn_none_seed1337_adam_lr0p001_bs32_ep60_m292b341a37_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Medium,2026,"(12, 24, 48, 72)",28803,1.0,0.125569,1.1363320001146349,0.09253702053286686,cnn_outputs\cnn_none_seed2026_adam_lr0p001_bs32_ep60_m292b341a37_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Small,42,"(8, 16, 32, 48)",12995,1.0,0.061633,0.8225020000099903,0.16490578583207657,cnn_outputs\cnn_none_seed42_adam_lr0p001_bs32_ep60_m1c113ae8e7_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Small,1337,"(8, 16, 32, 48)",12995,1.0,0.061633,0.7738169999720412,0.01632200389068089,cnn_outputs\cnn_none_seed1337_adam_lr0p001_bs32_ep60_m1c113ae8e7_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Small,2026,"(8, 16, 32, 48)",12995,1.0,0.061633,0.7969999999841093,0.025720866996040006,cnn_outputs\cnn_none_seed2026_adam_lr0p001_bs32_ep60_m1c113ae8e7_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Tiny,42,"(4, 8, 16, 24)",3395,1.0,0.023233,0.5104300000493822,0.1701726532189454,cnn_outputs\cnn_none_seed42_adam_lr0p001_bs32_ep60_m3fd7a3ed9b_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Tiny,1337,"(4, 8, 16, 24)",3395,1.0,0.023233,0.5101140000624582,0.16383912781701454,cnn_outputs\cnn_none_seed1337_adam_lr0p001_bs32_ep60_m3fd7a3ed9b_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Tiny,2026,"(4, 8, 16, 24)",3395,1.0,0.023233,0.5055210000318766,0.15140044198650784,cnn_outputs\cnn_none_seed2026_adam_lr0p001_bs32_ep60_m3fd7a3ed9b_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Micro,42,"(2, 4, 8, 12)",923,1.0,0.013377,0.3327510000235634,0.016024646492679966,cnn_outputs\cnn_none_seed42_adam_lr0p001_bs32_ep60_m32faeaa30a_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Micro,1337,"(2, 4, 8, 12)",923,1.0,0.013377,0.37830099994607735,0.14123320535217282,cnn_outputs\cnn_none_seed1337_adam_lr0p001_bs32_ep60_m32faeaa30a_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
+Micro,2026,"(2, 4, 8, 12)",923,1.0,0.013377,0.3325229999063595,0.016832313293971748,cnn_outputs\cnn_none_seed2026_adam_lr0p001_bs32_ep60_m32faeaa30a_oe1f37b6114\checkpoint.pth,CPU,1,raw 5000-sample window,True
