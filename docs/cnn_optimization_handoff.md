@@ -147,14 +147,41 @@ python -m src.cnn_1D.cnn_final_team_benchmark
 
 For official comparisons with other methods, time their deployment artifacts alongside these baselines in the same CPU session. Colab CPU latency does not establish latency on MathWorks-specific embedded hardware.
 
+### Four-way augmentation benchmark (separate CPU session)
+
+The original CNN and three seed-42 augmentation variants
+were measured in a second, shared Colab CPU session using
+batch size 1, one thread, 10 warmups, and 100 timed calls.
+
+| Augmentation | Package size (MB) | Mean latency (ms) |
+|---|---:|---:|
+| None | 0.214793 | 1.523826 |
+| Shift only | 0.214857 | 1.520527 |
+| Noise only | 0.214857 | 1.494867 |
+| Shift + noise | 0.214857 | 1.478975 |
+
+All four achieved 100% accuracy in the previously frozen
+test evaluation. These small latency differences do not
+establish a meaningful speed advantage from augmentation.
+
+The four-way measurements are not directly interchangeable
+with the earlier original-versus-micro benchmark, because
+they were collected in different Colab sessions.
+
+Benchmark record:
+`cnn_outputs/benchmarks/augmentation_colab_cpu_v1.json`
+
 ## 9. Team integration
 
 `results/experiments.csv` contains the following new entries:
 
 - **Experiment 1:** original 1D CNN, seed 42
 - **Experiment 2:** micro 1D CNN, seed 1337
+- **Experiment 3:** original CNN, shift-only augmentation, seed 42
+- **Experiment 4:** original CNN, noise-only augmentation, seed 42
+- **Experiment 5:** original CNN, combined augmentation, seed 42
 
-Both have `Compression = None`: channel-width reduction is a dense architecture change, not weight pruning or quantization. The original remains available as a compression reference; micro is a separate dense deployment alternative, not a replacement for existing compression experiments.
+All five CNN entries have `Compression = None`: channel-width reduction is a dense architecture change, not weight pruning or quantization. The original remains available as a compression reference; micro is a separate dense deployment alternative, not a replacement for existing compression experiments.
 
 ## 10. Important limitations
 
@@ -170,9 +197,9 @@ Both have `Compression = None`: channel-width reduction is a dense architecture 
 
 ## 11. Artifact availability and reproducibility
 
-**Committed:** experiment protocols and selection freeze; training/evaluation scripts; augmentation and width robustness CSVs; frozen test JSON; dense CPU benchmark CSV; official Colab CPU benchmark JSON; two inference packages and hash manifest; team experiment-tracker entries.
+**Committed:** experiment protocols and selection freeze; training/evaluation scripts; augmentation and width robustness CSVs; frozen test JSON; dense CPU benchmark CSV; official Colab CPU benchmark JSON; five inference packages and their hash manifests; four-way augmentation CPU benchmark JSON; team experiment-tracker entries.
 
-**Retained locally:** additional training checkpoints and per-epoch histories; deterministic validation perturbation `.npz`. The perturbation dataset can be regenerated using the committed deterministic generator. A fresh clone can load the two packaged models, but rerunning every historical checkpoint evaluation requires regenerating or separately sharing the uncommitted training artifacts. Preserve local experiment artifacts for auditing; do not delete them as part of Git cleanup.
+**Retained locally:** additional training checkpoints and per-epoch histories; deterministic validation perturbation `.npz`. The perturbation dataset can be regenerated using the committed deterministic generator. A fresh clone can load the five packaged models, but rerunning every historical checkpoint evaluation requires regenerating or separately sharing the uncommitted training artifacts. Preserve local experiment artifacts for auditing; do not delete them as part of Git cleanup.
 
 ## 12. Final outcome
 
