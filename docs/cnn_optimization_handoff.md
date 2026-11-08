@@ -3,7 +3,7 @@
 - **Project:** Break Through Tech AI × MathWorks
 - **Date:** 2026-11-07
 - **Branch:** `feature/1d-cnn-optimization`
-**Status:** Individual 1D CNN optimization and evaluation complete
+- **Status:** Individual 1D CNN optimization and evaluation complete
 
 ## 1. Objective and scope
 

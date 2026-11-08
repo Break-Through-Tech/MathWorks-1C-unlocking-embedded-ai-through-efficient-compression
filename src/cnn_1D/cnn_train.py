@@ -237,7 +237,7 @@ def main():
 
             torch.save({
                 "model_state_dict": model.state_dict(),
-                "channels": tuple(args.channels), 
+                "channels": tuple(args.channels),
                 "dropout": args.dropout,
                 "epoch": epoch,
                 "seed": args.seed,

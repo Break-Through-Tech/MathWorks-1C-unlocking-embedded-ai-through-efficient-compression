@@ -1,9 +1,9 @@
 # MathWorks 1D CNN — Registered Experiment Protocol
 
-**Project:** Break Through Tech AI Studio × MathWorks, bearing-fault classification  
-**Prepared:** 2026-11-07  
-**Status:** READY FOR PROTOCOL-ONLY COMMIT — local audit completed; remaining runs not started  
-**Branch:** `feature/1d-cnn-optimization` (local)  
+- **Project:** Break Through Tech AI Studio × MathWorks, bearing-fault classification
+- **Prepared:** 2026-11-07
+- **Status:** READY FOR PROTOCOL-ONLY COMMIT — local audit completed; remaining runs not started
+- **Branch:** `feature/1d-cnn-optimization` (local)
 **Scope:** Six-configuration hyperparameter study; four-way augmentation study; validation-only robustness; frozen final test evaluation; batch-one CPU benchmarking.
 
 ## 1. Provenance and prior work (do not present this as prospective)
