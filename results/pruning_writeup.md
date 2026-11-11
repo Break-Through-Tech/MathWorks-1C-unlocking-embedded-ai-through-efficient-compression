@@ -52,6 +52,67 @@ Fine-tuning mattered: before it, unstructured 75%/90% had fallen to 59%/67%
 validation accuracy and structured 50–90% to 33% (random chance). Fine-tuning
 recovered everything except structured 75% (→ 81%) and structured 90% (→ 48%).
 
+## Pushing unstructured past 90%: the break point
+
+Unstructured pruning was still at 100% at 90%, so the grid was extended until
+accuracy fell off (same pipeline: 15 fine-tune epochs at lr=1e-4).
+
+| Model | Weights left | Test accuracy | Val accuracy | Zipped (MB) |
+|---|---:|---:|---:|---:|
+| Unstructured 92% | ~4,000 | 100.0% | 100.0% | 0.041 |
+| Unstructured 94% | ~3,000 | 100.0% | 100.0% | 0.037 |
+| Unstructured 95% | ~2,500 | 100.0% | 100.0% | 0.034 |
+| Unstructured 96% | ~2,000 | 100.0% | 100.0% | 0.032 |
+| **Unstructured 97%** | **~1,500** | **100.0%** | **100.0%** | **0.030** |
+| Unstructured 98% | ~1,000 | 97.1% | 88.9% | 0.027 |
+| Unstructured 99% | ~500 | 37.3% | 48.1% | 0.024 |
+| Unstructured 99.5% | ~250 | 33.3% | 33.3% | 0.023 |
+
+("Weights left" counts the ~50,200 prunable Conv1d/Linear weights.)
+
+**The break point is between 97% and 98%.** Accuracy holds at 100% through
+97%, starts slipping at 98%, and collapses to chance at 99%. The margin at 97%
+is thin: its validation loss was 0.11 (vs 0.0007 at 92%) and was still falling
+at the last fine-tune epoch, so 97% sits right at the edge. Longer fine-tuning
+might push the break point slightly further.
+
+These rows are ids 10–17 in `experiments.csv`. Their latency was measured in a
+later session where the dense baseline itself ran at 1.13 ms, so latency is
+only comparable within that group (it was flat, ~1.0–1.15 ms, at every level).
+
+## Getting around "the zeros still take space"
+
+Mask-based pruning keeps every weight as a 4-byte float, zero or not. To turn
+the zeros into real savings, the model has to be stored or rebuilt
+differently. Measured on the saved checkpoints:
+
+| Storage format | Dense baseline | Unstr. 90% | Unstr. 97% |
+|---|---:|---:|---:|
+| Plain `.pth` (current) | 0.214 MB | 0.214 MB | 0.214 MB |
+| Zipped `.pth` (current) | 0.193 MB | 0.045 MB | 0.030 MB |
+| PyTorch sparse COO | 1.432 MB | 0.168 MB | 0.070 MB |
+| PyTorch sparse CSR | 0.620 MB | 0.077 MB | 0.035 MB |
+| Nonzero values + 1-bit mask | 0.227 MB | 0.046 MB | 0.032 MB |
+| Nonzero values + 1-bit mask, zipped | 0.194 MB | **0.030 MB** | **0.015 MB** |
+
+- **PyTorch's built-in sparse formats are a trap at this size.** They store a
+  64-bit index for every nonzero weight, so they are only smaller than dense at
+  very high sparsity, and never beat simply zipping.
+- **Storing only the nonzero values plus a 1-bit-per-weight mask** (which
+  weights survived) and zipping it is the smallest option: 0.030 MB at 90%
+  (~7× smaller than the dense `.pth`) and 0.015 MB at 97% (~14×). The model is
+  unpacked back to dense to run, so this saves storage/transfer, not compute.
+- **Physically removing structured-pruned filters** is the only route that
+  also makes the model faster: rebuild a narrower `BearingCNN` without the dead
+  filters. For structured 50% (which kept 100% accuracy) the layers become
+  8/16/32/48 channels instead of 16/32/64/96, about 13,200 parameters instead of
+  51,235, so a raw `.pth` around 4× smaller and far fewer multiplications. Not
+  implemented yet; note that a dead conv filter is followed by BatchNorm, which
+  turns its zero output into a constant, so that constant has to be folded into
+  the next layer's bias when the filter is removed.
+- **Quantization** (float32 → int8) shrinks every remaining weight 4×, and
+  stacks with either option above. That is the combined-compression step.
+
 ## Trade-off summary
 
 Unstructured pruning was essentially free on this task: even with 90% of
