@@ -30,9 +30,10 @@ Achor (GOOD)
 
 
 ARGUMENTS:
-update_experiments.py can recieve one of 3 arguments:
+update_experiments.py can recieve one of 4 arguments:
 'test' -> Prints what was parsed from output/experiments.txt
 'save' -> Saves experiment to experiments.csv
+'update' -> Overwrites the most recent experiment in experiments.csv (fixes a row instead of adding one)
 'remove' -> Removes most recent experiment from experiments.csv
 
 EXAMPLES:
@@ -72,71 +73,70 @@ Please shoot me (Tule) a message though IMessage if you have any questions/somet
 """
 import pandas as pd
 import sys
-import subprocess
 
-df = pd.read_csv('../results/experiments.csv')
+CSV_PATH = '../results/experiments.csv'
 
-exp_id = 0 if df.empty else df.iloc[-1]['experiment_id'] + 1
+# Read everything as plain text and do NOT treat the word "None" as missing.
+# (pandas' default turns "None" into an empty cell, which is how the baseline row
+# ended up with blank Augmentation / Compression columns.)
+df = pd.read_csv(CSV_PATH, dtype=object, keep_default_na=False)
 
-text = subprocess.run(
-    'cat output/log.txt',
-    shell=True,
-    capture_output=True
-)
-experiments = subprocess.run(
-    'cat output/experiments.txt',
-    shell=True,
-    capture_output=True
-)
-str_output = text.stdout.decode("utf-8")
-exp_output = experiments.stdout.decode("utf-8")
+# Next id for 'save'. 'update' re-uses the id of the last row instead.
+exp_id = 0 if df.empty else int(df.iloc[-1]['experiment_id']) + 1
+
+
+def read_text(path):
+    """Read a text file (works on Windows, Mac, and Colab; no shell needed)."""
+    with open(path, encoding='utf-8') as f:
+        return f.read().replace('\r\n', '\n')
+
+
+def after_colon(line):
+    """Everything after the first ': ' on a line, with stray spaces removed."""
+    return line.split(':', 1)[1].strip()
+
+
+str_output = read_text('output/log.txt')
+exp_output = read_text('output/experiments.txt')
 
 info = exp_output.split('\n')
-idx = info[0].find(':') + 2
-author = info[0][idx:]
+author = after_colon(info[0])
+date = after_colon(info[1])
+model = after_colon(info[2])
+features = after_colon(info[3])
+standardization = after_colon(info[4])
+augmentation = after_colon(info[5])
+compression = after_colon(info[6])
 
-idx = info[1].find(':') + 2
-date = info[1][idx:]
+# Notes can span several lines: keep everything after the first ':' of the Notes line.
+notes = after_colon('\n'.join(info[7:]))
 
-idx = info[2].find(':') + 2
-model = info[2][idx:]
-
-idx = info[3].find(':') + 2
-features = info[3][idx:]
-
-idx = info[4].find(':') + 2
-standardization = info[4][idx:]
-
-idx = info[5].find(':') + 2
-augmentation = info[5][idx:]
-
-idx = info[6].find(':') + 2
-compression = info[6][idx:]
-
-idx = info[6].find(':') + 2
-compression = info[6][idx:]
-
-notes_all = info[7:]
-note_one_str = ''
-for note in notes_all:
-    note_one_str+= note + '\n'
-
-idx = note_one_str.find(':') + 2
-notes = note_one_str[idx:]
+log_lines = str_output.split('\n')
+accuracy = float(after_colon(log_lines[0]))
+model_size = float(after_colon(log_lines[1]))
+latency = float(after_colon(log_lines[2]))
 
 
-l1 = str_output.split('\n')[0]
-idx = l1.find(':') + 2
-accuracy = l1[idx:]
+def build_row(experiment_id):
+    return {
+        "experiment_id": experiment_id,
+        "date": date,
+        "author": author,
+        "model": model,
+        "input_repr": features,
+        "standardization": standardization,
+        "augmentation": augmentation,
+        "compression": compression,
+        "accuracy_test": accuracy,
+        "model_size_mb": model_size,
+        "latency_ms_per_sample": latency,
+        "notes": notes,
+    }
 
-l2 = str_output.split('\n')[1]
-idx = l2.find(':') + 2
-model_size = l2[idx:]
 
-l3 = str_output.split('\n')[2]
-idx = l3.find(':') + 2
-latency = l3[idx:]
-if sys.argv[1] == 'test':
+if len(sys.argv) < 2:
+    print("Please supply an argument: test, save, update, or remove (see the usage tips at the top of this file).")
+elif sys.argv[1] == 'test':
     print('exp_id:', exp_id)
     print('author:', author)
     print('date: ', date)
@@ -150,33 +150,30 @@ if sys.argv[1] == 'test':
     print('latency: ', latency)
     print('notes: ', notes)
 elif sys.argv[1] == 'save':
-    new_row = {
-    "experiment_id": exp_id,
-    "date": date,
-    "author": author,
-    "model": model,
-    "input_repr": features,
-    "standardization": standardization,
-    "augmentation": augmentation,
-    "compression": compression,
-    "accuracy_test": accuracy,
-    "model_size_mb": model_size,
-    "latency_ms_per_sample": latency,
-    "notes": notes
-    }
-    df.loc[len(df)] = new_row
-    df.to_csv('../results/experiments.csv', index=False)
+    df.loc[len(df)] = build_row(exp_id)
+    df.to_csv(CSV_PATH, index=False)
     print(f"Experiment {exp_id} saved successfully!")
-elif sys.argv[1] == 'remove':
-    if exp_id != 1:
-        df = pd.read_csv("../results/experiments.csv")
-        df = df.iloc[:-1] 
-        df.to_csv("../results/experiments.csv", index=False)
-        print(f"Experiment {exp_id} removed successfully!")
+elif sys.argv[1] == 'update':
+    # Overwrites the MOST RECENT row with what is in output/log.txt and
+    # output/experiments.txt. Use this to fix a row instead of adding a new one.
+    if df.empty:
+        print('Nothing to update: experiments.csv has no rows yet. Use "save" instead.')
     else:
-        print('You are trying to remove the baseline experiment. Remove the if else (~line 170) if you truly intend that.')
+        last_id = int(df.iloc[-1]['experiment_id'])
+        df.loc[df.index[-1]] = build_row(last_id)
+        df.to_csv(CSV_PATH, index=False)
+        print(f"Experiment {last_id} updated successfully!")
+elif sys.argv[1] == 'remove':
+    # Removes the MOST RECENT row (including the baseline, if it is the only row).
+    if df.empty:
+        print('Nothing to remove: experiments.csv has no rows.')
+    else:
+        last_id = int(df.iloc[-1]['experiment_id'])
+        df = df.iloc[:-1]
+        df.to_csv(CSV_PATH, index=False)
+        print(f"Experiment {last_id} removed successfully!")
 else:
-    print('Please supply the correct argument for this program (review update_experiments.py lines 32-36) for guidance.')
+    print('Please supply the correct argument: test, save, update, or remove (see the usage tips at the top of this file).')
     
 
 
