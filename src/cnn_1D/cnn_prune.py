@@ -42,6 +42,7 @@ from torch.utils.data import DataLoader
 
 from src.data import load_split
 from src.cnn_1D.cnn_model import BearingCNN
+from src.cnn_1D.cnn_sparse import save_sparse
 from src.cnn_1D.cnn_train import evaluate, prepare_data, set_seed
 from src.metrics import measure_inference_latency_ms, measure_model_size_mb
 
@@ -405,8 +406,13 @@ def main(argv=None):
     results = measure(model, loaders, device, eval_test=args.eval_test)
     out_path = save_pruned_checkpoint(model, checkpoint, args, results, args.output_dir)
 
+    # The shipped form of the pruned model: only the nonzero weights.
+    sparse_path = out_path.parent / "model_sparse.npz"
+    save_sparse(model, checkpoint, sparse_path)
+
     print("\n--- Results ---")
     print(f"Pruned checkpoint: {out_path}")
+    print(f"Sparse model: {sparse_path} ({measure_model_size_mb(path=sparse_path):.5f} MB)")
     print(f"Val accuracy: {results['val_accuracy']:.4f}")
     if args.eval_test:
         print(f"Test accuracy: {results['test_accuracy']:.4f}")
