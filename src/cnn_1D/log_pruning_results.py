@@ -1,25 +1,38 @@
 """
 src/cnn_1D/log_pruning_results.py
 
-Log the pruning experiment grid into results/experiments.csv.
+Log the pruning experiments into results/experiments.csv, following
+measurement-guide.md.
 
-Re-measures the dense baseline and every pruned checkpoint under
-cnn_outputs/pruned/ in ONE process on ONE machine, so the 9 rows are
-directly comparable (latency in particular varies across environments).
-Appends one row per model to results/experiments.csv in the team's
-column format.
+Re-measures the dense baseline and every pruned run under
+cnn_outputs/pruned/ in ONE process, so latency for the baseline and
+the pruned models comes from the same session (the guide asks for the
+original to be re-timed alongside its compressed versions).
+
+For each pruned run:
+    - the shipped file is model_sparse.npz (nonzero weights + bit
+      mask, see cnn_sparse.py); it is written if missing
+    - size is that file, measured with measure_model_size_mb(path=...)
+    - accuracy and latency come from the model loaded back FROM that
+      file, so the logged numbers belong to what would be shipped
+The dense baseline is logged with its normal .pth size.
+
+Run this in a Google Colab CPU runtime for the official latency numbers
+(see measurement-guide.md). It records the platform in `notes`.
 
 Usage (from the repository root):
 
-    python -m src.cnn_1D.log_pruning_results            # preview only
-    python -m src.cnn_1D.log_pruning_results --save     # append to CSV
+    python -m src.cnn_1D.log_pruning_results              # preview only
+    python -m src.cnn_1D.log_pruning_results --save       # write to CSV
 
-    # Log only extra levels added later (e.g. the push past 90%):
-    python -m src.cnn_1D.log_pruning_results --methods unstructured \
-        --levels 92 94 95 96 97 98 99 99.5 --no-baseline --save
+With --save, this author's earlier pruning rows are replaced, so the
+CSV holds one current set of pruning measurements.
 """
 
 import argparse
+import platform
+import re
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
@@ -27,14 +40,16 @@ import torch
 
 from src.cnn_1D.cnn_model import BearingCNN
 from src.cnn_1D.cnn_prune import build_eval_loaders, measure
+from src.cnn_1D.cnn_sparse import load_sparse, save_sparse
+from src.metrics import measure_model_size_mb
 
 BASELINE_CHECKPOINT = Path("cnn_outputs/cnn_rough_seed42.pth")
 PRUNED_DIR = Path("cnn_outputs/pruned")
 CSV_PATH = Path("results/experiments.csv")
+SPARSE_NAME = "model_sparse.npz"
 
 AUTHOR = "Aigerim Zhadikbay"
-DATE = "10/28/2026"
-HARDWARE = "MacBook Air CPU, 1 thread"
+RUN_DIR_RE = re.compile(r"(unstructured|structured)_(\d+(?:\.\d+)?)pct")
 
 
 def load_model(checkpoint_path):
@@ -45,93 +60,135 @@ def load_model(checkpoint_path):
     return model, checkpoint
 
 
-def collect_rows(methods, levels, include_baseline):
-    device = torch.device("cpu")
+def hardware_note():
+    """Where the timing ran, e.g. 'Colab CPU' or 'macOS-15.6-arm64 CPU'."""
+    try:
+        import google.colab  # noqa: F401
+        where = "Colab CPU"
+    except ImportError:
+        where = f"{platform.platform()} CPU (not Colab: re-run on Colab for official latency)"
+    return f"{where}; 1 thread; batch=1; torch {torch.__version__}"
 
-    _, baseline_ckpt = load_model(BASELINE_CHECKPOINT)
+
+def pruned_runs(methods):
+    """(method, level, run_dir) for every pruned run, in readable order."""
+    runs = []
+    for run_dir in PRUNED_DIR.iterdir():
+        match = RUN_DIR_RE.fullmatch(run_dir.name)
+        if match and match.group(1) in methods and (run_dir / "checkpoint.pth").exists():
+            runs.append((match.group(1), float(match.group(2)), run_dir))
+    order = {method: i for i, method in enumerate(methods)}
+    return sorted(runs, key=lambda run: (order[run[0]], run[1]))
+
+
+def collect_rows(methods):
+    device = torch.device("cpu")
+    hardware = hardware_note()
+    today = date.today().strftime("%m/%d/%Y")
+
+    baseline, baseline_ckpt = load_model(BASELINE_CHECKPOINT)
     loaders = build_eval_loaders(baseline_ckpt, include_test=True)
 
-    # Dense baseline first, then pruned runs in a fixed, readable order.
-    runs = [("none", None, BASELINE_CHECKPOINT)] if include_baseline else []
-    for method in methods:
-        for level in levels:
-            path = PRUNED_DIR / f"{method}_{level:g}pct" / "checkpoint.pth"
-            if path.exists():
-                runs.append((method, level, path))
-            else:
-                print(f"WARNING: missing {path}, skipping")
+    common = {
+        "date": today,
+        "author": AUTHOR,
+        "model": "1D CNN",
+        "input_repr": "raw 5000-sample window",
+        "standardization": "Global z-score",
+        "augmentation": "None",
+    }
 
     rows = []
-    for method, level, path in runs:
-        model, ckpt = load_model(path)
-        results = measure(model, loaders, device, eval_test=True)
 
-        if method == "none":
-            compression = "None"
-            note_head = f"Dense 1D CNN baseline ({BASELINE_CHECKPOINT.name}) re-measured for pruning comparison"
-        else:
-            compression = f"pruning: {method} {level:g}%"
-            note_head = (
-                f"Pruned {BASELINE_CHECKPOINT.name}, fine-tuned "
-                f"{ckpt['finetune_epochs']} epochs at lr={ckpt['finetune_lr']:g}"
-            )
+    results = measure(baseline, loaders, device, eval_test=True)
+    rows.append({
+        **common,
+        "compression": "None",
+        "accuracy_test": results["test_accuracy"],
+        "model_size_mb": measure_model_size_mb(path=BASELINE_CHECKPOINT),
+        "latency_ms_per_sample": results["latency"]["mean_ms"],
+        "notes": (
+            f"Dense reference for pruning, re-timed in the same session as the pruned "
+            f"models. artifact={BASELINE_CHECKPOINT} (same weights as "
+            f"final_models/original_reference_seed42.pth); saved as dense .pth; "
+            f"val_acc={results['val_accuracy']:.4f}; {hardware}"
+        ),
+    })
+    print(f"{'baseline':<20} {_summary(rows[-1])}")
 
+    for method, level, run_dir in pruned_runs(methods):
+        checkpoint_path = run_dir / "checkpoint.pth"
+        sparse_path = run_dir / SPARSE_NAME
+
+        pruned, ckpt = load_model(checkpoint_path)
+        if not sparse_path.exists():
+            save_sparse(pruned, ckpt, sparse_path)
+
+        # Measure the model as rebuilt from the shipped sparse file.
+        shipped, _ = load_sparse(sparse_path)
+        results = measure(shipped, loaders, device, eval_test=True)
+
+        style = "individual weights, global L1" if method == "unstructured" else "whole conv filters, L2"
         rows.append({
-            "date": DATE,
-            "author": AUTHOR,
-            "model": "1D CNN (BearingCNN)",
-            "input_repr": "raw waveform (1x5000)",
-            "standardization": "Global z-score",
-            "augmentation": "None",
-            "compression": compression,
+            **common,
+            "compression": "Pruning",
             "accuracy_test": results["test_accuracy"],
-            "model_size_mb": results["size_mb"],
+            "model_size_mb": measure_model_size_mb(path=sparse_path),
             "latency_ms_per_sample": results["latency"]["mean_ms"],
             "notes": (
-                f"{note_head}. zipped_mb={results['zipped_size_mb']:.5f}; "
-                f"val_acc={results['val_accuracy']:.4f}; {HARDWARE}"
+                f"{method.capitalize()} pruning {level:g}% ({style}) of "
+                f"{BASELINE_CHECKPOINT.name}, fine-tuned {ckpt['finetune_epochs']} epochs "
+                f"at lr={ckpt['finetune_lr']:g}. artifact={sparse_path}; saved sparse "
+                f"(nonzero float32 weights + 1-bit mask, np.savez_compressed); "
+                f"dense .pth would be {measure_model_size_mb(path=checkpoint_path):.6f} MB; "
+                f"timed after unpacking to a dense model; "
+                f"val_acc={results['val_accuracy']:.4f}; {hardware}"
             ),
         })
-
-        print(
-            f"{compression:<28} test_acc={results['test_accuracy']:.4f} "
-            f"size={results['size_mb']:.5f}MB zipped={results['zipped_size_mb']:.5f}MB "
-            f"latency={results['latency']['mean_ms']:.3f}ms"
-        )
+        print(f"{run_dir.name:<20} {_summary(rows[-1])}")
 
     return rows
 
 
+def _summary(row):
+    return (
+        f"test_acc={row['accuracy_test']:.4f} size={row['model_size_mb']:.6f}MB "
+        f"latency={row['latency_ms_per_sample']:.3f}ms"
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description="Log pruning results to experiments.csv")
-    parser.add_argument("--save", action="store_true", help="Append the rows to results/experiments.csv")
+    parser.add_argument(
+        "--save", action="store_true",
+        help="Replace this author's pruning rows in results/experiments.csv"
+    )
     parser.add_argument(
         "--methods", nargs="+", choices=("unstructured", "structured"),
         default=["unstructured", "structured"], help="Pruning styles to log"
     )
-    parser.add_argument(
-        "--levels", nargs="+", type=float, default=[25, 50, 75, 90],
-        help="Prune levels in percent (default: 25 50 75 90)"
-    )
-    parser.add_argument(
-        "--no-baseline", action="store_true",
-        help="Skip the dense baseline row (it is already in the CSV)"
-    )
     args = parser.parse_args()
 
-    rows = collect_rows(args.methods, args.levels, not args.no_baseline)
+    torch.set_num_threads(1)
+    rows = collect_rows(args.methods)
 
     df = pd.read_csv(CSV_PATH, dtype=object, keep_default_na=False)
-    next_id = 0 if df.empty else int(df.iloc[-1]["experiment_id"]) + 1
+    earlier = df["author"] == AUTHOR
+    df = df[~earlier].reset_index(drop=True)
+    next_id = 0 if df.empty else max(int(i) for i in df["experiment_id"]) + 1
 
     for offset, row in enumerate(rows):
         df.loc[len(df)] = {"experiment_id": next_id + offset, **row}
 
+    summary = (
+        f"{len(rows)} rows, ids {next_id}-{next_id + len(rows) - 1}; "
+        f"replaces {int(earlier.sum())} earlier rows by {AUTHOR}"
+    )
     if args.save:
         df.to_csv(CSV_PATH, index=False)
-        print(f"\nAppended {len(rows)} rows to {CSV_PATH} (ids {next_id}-{next_id + len(rows) - 1})")
+        print(f"\nWrote {CSV_PATH} ({summary})")
     else:
-        print(f"\nPreview only ({len(rows)} rows, ids {next_id}-{next_id + len(rows) - 1}). Re-run with --save to write.")
+        print(f"\nPreview only ({summary}). Re-run with --save to write.")
 
 
 if __name__ == "__main__":
