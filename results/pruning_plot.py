@@ -25,7 +25,7 @@ OUT_PATH = RESULTS_DIR / "pruning_accuracy_vs_level.png"
 COLORS = {"unstructured": "#2a78d6", "structured": "#eb6834"}
 CHANCE_ACCURACY = 1 / 3  # three balanced classes
 
-COMPRESSION_RE = re.compile(r"pruning: (unstructured|structured) (\d+)%")
+COMPRESSION_RE = re.compile(r"pruning: (unstructured|structured) (\d+(?:\.\d+)?)%")
 ZIPPED_RE = re.compile(r"zipped_mb=([0-9.]+)")
 
 
@@ -42,7 +42,7 @@ def load_pruning_rows(csv_path: Path) -> pd.DataFrame:
 
         match = COMPRESSION_RE.fullmatch(str(row["compression"]).strip())
         if match:
-            method, level = match.group(1), int(match.group(2))
+            method, level = match.group(1), float(match.group(2))
         elif str(row["compression"]).strip() in ("None", "", "nan"):
             method, level = "baseline", 0
         else:

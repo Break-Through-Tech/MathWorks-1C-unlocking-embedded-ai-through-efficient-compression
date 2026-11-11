@@ -13,6 +13,10 @@ Usage (from the repository root):
 
     python -m src.cnn_1D.log_pruning_results            # preview only
     python -m src.cnn_1D.log_pruning_results --save     # append to CSV
+
+    # Log only extra levels added later (e.g. the push past 90%):
+    python -m src.cnn_1D.log_pruning_results --methods unstructured \
+        --levels 92 94 95 96 97 98 99 99.5 --no-baseline --save
 """
 
 import argparse
@@ -29,7 +33,7 @@ PRUNED_DIR = Path("cnn_outputs/pruned")
 CSV_PATH = Path("results/experiments.csv")
 
 AUTHOR = "Aigerim Zhadikbay"
-DATE = "10/27/2026"
+DATE = "10/28/2026"
 HARDWARE = "MacBook Air CPU, 1 thread"
 
 
@@ -41,17 +45,17 @@ def load_model(checkpoint_path):
     return model, checkpoint
 
 
-def collect_rows():
+def collect_rows(methods, levels, include_baseline):
     device = torch.device("cpu")
 
     _, baseline_ckpt = load_model(BASELINE_CHECKPOINT)
     loaders = build_eval_loaders(baseline_ckpt, include_test=True)
 
     # Dense baseline first, then pruned runs in a fixed, readable order.
-    runs = [("none", None, BASELINE_CHECKPOINT)]
-    for method in ("unstructured", "structured"):
-        for level in (25, 50, 75, 90):
-            path = PRUNED_DIR / f"{method}_{level}pct" / "checkpoint.pth"
+    runs = [("none", None, BASELINE_CHECKPOINT)] if include_baseline else []
+    for method in methods:
+        for level in levels:
+            path = PRUNED_DIR / f"{method}_{level:g}pct" / "checkpoint.pth"
             if path.exists():
                 runs.append((method, level, path))
             else:
@@ -66,7 +70,7 @@ def collect_rows():
             compression = "None"
             note_head = f"Dense 1D CNN baseline ({BASELINE_CHECKPOINT.name}) re-measured for pruning comparison"
         else:
-            compression = f"pruning: {method} {level}%"
+            compression = f"pruning: {method} {level:g}%"
             note_head = (
                 f"Pruned {BASELINE_CHECKPOINT.name}, fine-tuned "
                 f"{ckpt['finetune_epochs']} epochs at lr={ckpt['finetune_lr']:g}"
@@ -101,9 +105,21 @@ def collect_rows():
 def main():
     parser = argparse.ArgumentParser(description="Log pruning results to experiments.csv")
     parser.add_argument("--save", action="store_true", help="Append the rows to results/experiments.csv")
+    parser.add_argument(
+        "--methods", nargs="+", choices=("unstructured", "structured"),
+        default=["unstructured", "structured"], help="Pruning styles to log"
+    )
+    parser.add_argument(
+        "--levels", nargs="+", type=float, default=[25, 50, 75, 90],
+        help="Prune levels in percent (default: 25 50 75 90)"
+    )
+    parser.add_argument(
+        "--no-baseline", action="store_true",
+        help="Skip the dense baseline row (it is already in the CSV)"
+    )
     args = parser.parse_args()
 
-    rows = collect_rows()
+    rows = collect_rows(args.methods, args.levels, not args.no_baseline)
 
     df = pd.read_csv(CSV_PATH, dtype=object, keep_default_na=False)
     next_id = 0 if df.empty else int(df.iloc[-1]["experiment_id"]) + 1
