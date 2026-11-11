@@ -48,31 +48,31 @@ test-set outputs match the original checkpoint bit for bit for all 17 models.
   file, so they describe what would actually be shipped.
 - **Latency**: batch size 1, one thread, shared `measure_inference_latency_ms`
   defaults, with the dense reference re-timed in the same run as every pruned
-  model. Timed on a MacBook (macOS, x86_64), **not yet on Colab CPU** as the
-  guide requires; `log_pruning_results.py` records the platform in `notes` and
-  should be re-run on Colab for official latency.
+  model. Timed on a **Colab CPU runtime** (Intel Xeon @ 2.20GHz, 2 vCPUs,
+  torch 2.14.1+cpu) as the guide requires, using
+  `notebooks/07_pruning_colab.ipynb`.
 
 ## Results
 
 | Model | Test accuracy | Shipped size (MB) | Smaller than dense | Latency (ms/sample) |
 |---|---:|---:|---:|---:|
-| Dense reference (`.pth`) | 100.0% | 0.2165 | 1.0× | 1.08 |
-| Unstructured 25% | 100.0% | 0.1478 | 1.5× | 1.05 |
-| Unstructured 50% | 100.0% | 0.1008 | 2.1× | 1.05 |
-| Unstructured 75% | 100.0% | 0.0547 | 4.0× | 1.02 |
-| **Unstructured 90%** | **100.0%** | **0.0262** | **8.3×** | **1.02** |
-| Unstructured 92% | 100.0% | 0.0222 | 9.7× | 1.01 |
-| Unstructured 94% | 100.0% | 0.0183 | 11.9× | 1.01 |
-| Unstructured 95% | 100.0% | 0.0162 | 13.4× | 1.02 |
-| Unstructured 96% | 100.0% | 0.0141 | 15.3× | 1.01 |
-| **Unstructured 97%** | **100.0%** | **0.0120** | **18.0×** | **1.01** |
-| Unstructured 98% | 97.1% | 0.0098 | 22.0× | 1.02 |
-| Unstructured 99% | 37.3% | 0.0075 | 29.0× | 0.99 |
-| Unstructured 99.5% | 33.3% | 0.0062 | 34.9× | 0.92 |
-| Structured 25% | 100.0% | 0.1448 | 1.5× | 0.97 |
-| Structured 50% | 100.0% | 0.0984 | 2.2× | 0.91 |
-| Structured 75% | 81.4% | 0.0520 | 4.2× | 0.87 |
-| Structured 90% | 47.1% | 0.0242 | 8.9× | 0.84 |
+| Dense reference (`.pth`) | 100.0% | 0.2165 | 1.0× | 1.31 |
+| Unstructured 25% | 100.0% | 0.1478 | 1.5× | 1.31 |
+| Unstructured 50% | 100.0% | 0.1008 | 2.1× | 1.56 |
+| Unstructured 75% | 100.0% | 0.0547 | 4.0× | 1.46 |
+| **Unstructured 90%** | **100.0%** | **0.0262** | **8.3×** | **1.37** |
+| Unstructured 92% | 100.0% | 0.0222 | 9.7× | 1.57 |
+| Unstructured 94% | 100.0% | 0.0183 | 11.9× | 1.36 |
+| Unstructured 95% | 100.0% | 0.0162 | 13.4× | 1.33 |
+| Unstructured 96% | 100.0% | 0.0141 | 15.3× | 1.37 |
+| **Unstructured 97%** | **100.0%** | **0.0120** | **18.0×** | **1.45** |
+| Unstructured 98% | 97.1% | 0.0098 | 22.0× | 1.31 |
+| Unstructured 99% | 37.3% | 0.0075 | 29.0× | 1.42 |
+| Unstructured 99.5% | 33.3% | 0.0062 | 34.9× | 1.36 |
+| Structured 25% | 100.0% | 0.1448 | 1.5× | 1.42 |
+| Structured 50% | 100.0% | 0.0984 | 2.2× | 1.48 |
+| Structured 75% | 81.4% | 0.0520 | 4.2× | 1.40 |
+| Structured 90% | 47.1% | 0.0242 | 8.9× | 1.65 |
 
 Fine-tuning mattered: before it, unstructured 75%/90% had fallen to 59%/67%
 validation accuracy and structured 50–90% to 33% (random chance). Fine-tuning
@@ -142,12 +142,12 @@ letting the pruning spread across redundant weights.
 Pruning alone does not shrink a normal `.pth` file, because a zeroed float32
 weight still takes 4 bytes. Saving only the surviving weights does: the 90%
 model ships at 0.026 MB (8.3× smaller) and the 97% model at 0.012 MB (18×).
-Latency did not improve for unstructured pruning, since the model is run dense
-and the zeros are still multiplied. Structured pruning timed somewhat faster at
-high levels (0.84 vs 1.08 ms at 90%) even though the layer shapes are
-unchanged; the cause was not investigated (one possibility: dead channels
-produce exact zeros, avoiding slow very-small-number arithmetic), so it should
-not be read as a reliable speed-up.
+Latency did not improve for either style: on Colab CPU every pruned model ran
+at 1.31–1.65 ms vs 1.31 ms for the dense reference. That is expected, since
+the model is unpacked to dense to run and the zeros are still multiplied; the
+spread between pruned models is timing noise, not a real slowdown. (An earlier
+laptop run had suggested structured pruning was slightly faster; the official
+Colab run did not reproduce that.)
 
 For comparison, the team's dense **micro CNN** (923 parameters, channels
 2/4/8/12, 0.0136 MB, 100% test accuracy) reaches a similar size by training a
@@ -172,8 +172,8 @@ the baseline (see `src/cnn_1D/README.md`); `model_sparse.npz` loads with
   scores mean the dataset can't distinguish those models, not that pruning
   costs nothing.
 - Single seed (42), single fine-tuning schedule (15 epochs, untuned).
-- Latency was timed on a MacBook, not Colab CPU; re-run the logger on Colab for
-  the official numbers.
+- Latency differences of a few tenths of a millisecond between runs are noise;
+  only a same-session comparison against the dense reference is meaningful.
 - Robustness of pruned models under noise is untested (relevant to the noise
   stress-test work — these checkpoints are ready inputs for it).
 
