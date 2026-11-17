@@ -5,6 +5,7 @@ from src.metrics import accuracy, measure_model_size_mb, measure_inference_laten
 
 from src.data import load_split
 from src.cnn_1D.cnn_model import BearingCNN
+from pathlib import Path
 
 # Define prediction function.
 def predict_fn(X):
@@ -15,10 +16,12 @@ def predict_fn(X):
         return [class_names[i] for i in y_pred[:]]
 
 # 1. Load the checkpoint and reconstruct the model.
-for elem in ["cnn_outputs/cnn_rough_aug_seed42.pth", "cnn_outputs/cnn_rough_seed42.pth"]:
+folder = Path(".")
+pth_files = list(folder.rglob("*.pth"))
+for elem in pth_files:
 
     checkpoint = torch.load(
-        "cnn_outputs/cnn_rough_aug_seed42.pth",
+        elem,
         map_location="cpu",
         weights_only=True
     )
@@ -36,8 +39,7 @@ for elem in ["cnn_outputs/cnn_rough_aug_seed42.pth", "cnn_outputs/cnn_rough_seed
     )
     # 3. Evaluate Metrics
     y_pred = predict_fn(X)
-    print("Predictions:", y_pred[:])
-    print("Actual labels:", y_true[:])
+    print(f"Path to file: {elem}")
     print("Model Accuracy:", accuracy(y_true, y_pred))
     print("Model Size: (MB)", measure_model_size_mb(model, kind="pytorch"))
     results = measure_inference_latency_ms(predict_fn, X)
