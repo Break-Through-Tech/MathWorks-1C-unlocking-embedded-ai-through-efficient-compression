@@ -24,17 +24,25 @@ How much "detail" to keep can be chosen two ways:
     energy : keep the smallest rank whose singular values hold at least
              this fraction of the layer's squared singular-value energy
 
+The default source is Gurbaj's frozen compression reference,
+cnn_outputs/final_models/original_reference_seed42.pth (same weights as
+cnn_outputs/cnn_rough_seed42.pth). Projected models are saved as small
+inference packages in the same layout as his final models, plus the
+ranks needed to rebuild the split layers; run details go to a separate
+run_info.json so they do not count towards the shipped file size.
+
 Usage (from the repository root):
 
     python -m src.cnn_1D.cnn_project --report
     python -m src.cnn_1D.cnn_project --keep 0.5
     python -m src.cnn_1D.cnn_project --keep 0.9 --mode energy
     python -m src.cnn_1D.cnn_project --keep 0.25 \\
-        --checkpoint cnn_outputs/cnn_rough_aug_seed42.pth
+        --checkpoint cnn_outputs/augmentation_models/original_both_seed42.pth
 """
 
 import argparse
 import copy
+import json
 import tempfile
 import zipfile
 from pathlib import Path
@@ -49,8 +57,14 @@ from src.cnn_1D.cnn_model import BearingCNN
 from src.cnn_1D.cnn_train import evaluate, prepare_data, set_seed
 from src.metrics import measure_inference_latency_ms, measure_model_size_mb
 
-DEFAULT_CHECKPOINT = Path("cnn_outputs/cnn_rough_seed42.pth")
+DEFAULT_CHECKPOINT = Path("cnn_outputs/final_models/original_reference_seed42.pth")
 DEFAULT_OUTPUT_DIR = Path("cnn_outputs/projected")
+PACKAGE_NAME = "model.pth"
+RUN_INFO_NAME = "run_info.json"
+
+# Projection is written for the original-width BearingCNN only.
+BASE_CHANNELS = (16, 32, 64, 96)
+BASE_DROPOUT = 0.20
 
 # Conv blocks 3 and 4 hold ~89% of the model's weights (see --report).
 DEFAULT_LAYERS = ("features.8", "features.12")
@@ -270,12 +284,24 @@ def build_projected_model(ranks):
 
 
 def load_model(checkpoint_path, device=torch.device("cpu")):
-    """Reload a baseline or projected checkpoint and its metadata."""
+    """
+    Reload a baseline checkpoint, a final inference package, or a
+    projected package, together with its metadata.
+    """
     checkpoint = torch.load(
         checkpoint_path,
         map_location=device,
         weights_only=True
     )
+
+    channels = tuple(checkpoint.get("channels", BASE_CHANNELS))
+    dropout = float(checkpoint.get("dropout", BASE_DROPOUT))
+    if channels != BASE_CHANNELS or abs(dropout - BASE_DROPOUT) > 1e-9:
+        raise ValueError(
+            f"{checkpoint_path}: projection supports the original BearingCNN "
+            f"(channels={BASE_CHANNELS}, dropout={BASE_DROPOUT}), "
+            f"got channels={channels}, dropout={dropout}"
+        )
 
     model = build_projected_model(checkpoint.get("projection_ranks", {})).to(device)
     model.load_state_dict(checkpoint["model_state_dict"])
@@ -428,39 +454,46 @@ def print_results(label, results):
     print(line)
 
 
-def save_projected_checkpoint(model, checkpoint, args, ranks, summary,
-                              best_epoch, results):
+def run_dir_for(output_dir, source_path, mode, keep):
+    """e.g. cnn_outputs/projected/original_reference_seed42/rank_25pct"""
+    return Path(output_dir) / Path(source_path).stem / f"{mode}_{keep * 100:g}pct"
+
+
+def save_projected_package(model, source_checkpoint, ranks, run_dir,
+                           run_info, overwrite=False):
     """
-    Save in the baseline's checkpoint format plus the projection settings.
-    load_model() rebuilds the split layers from "projection_ranks".
+    Save the projected model as an inference package (same keys as
+    Gurbaj's final_models/*.pth, plus "projection_ranks" so load_model()
+    can rebuild the split layers) and its run details as run_info.json.
+    Returns the package path.
     """
-    run_dir = (
-        args.output_dir / args.checkpoint.stem
-        / f"{args.mode}_{args.keep * 100:g}pct"
-    )
+    run_dir = Path(run_dir)
+    package_path = run_dir / PACKAGE_NAME
+    info_path = run_dir / RUN_INFO_NAME
+
+    if not overwrite:
+        for path in (package_path, info_path):
+            if path.exists():
+                raise FileExistsError(f"Refusing to overwrite {path} (use --overwrite)")
+
     run_dir.mkdir(parents=True, exist_ok=True)
-    out_path = run_dir / "checkpoint.pth"
 
     torch.save({
+        "format_version": 1,
         "model_state_dict": model.state_dict(),
-        "projection_ranks": ranks,
-        "projection_mode": args.mode,
-        "projection_keep": args.keep,
-        "projection_summary": summary,
+        "projection_ranks": dict(ranks),
+        "channels": BASE_CHANNELS,
+        "dropout": BASE_DROPOUT,
+        "train_mean": float(source_checkpoint["train_mean"]),
+        "train_std": float(source_checkpoint["train_std"]),
+        "class_names": tuple(source_checkpoint["class_names"]),
         "seed": SEED,
-        "train_mean": checkpoint["train_mean"],
-        "train_std": checkpoint["train_std"],
-        "class_names": checkpoint["class_names"],
-        "augmentation": checkpoint.get("augmentation", "none"),
-        "torch_version": str(torch.__version__),
-        "finetune_epochs": 0 if args.no_finetune else args.epochs,
-        "finetune_lr": args.lr,
-        "finetune_best_epoch": best_epoch,
-        "source_checkpoint": str(args.checkpoint),
-        "results": results,
-    }, out_path)
+        "augmentation": source_checkpoint.get("augmentation", "none"),
+    }, package_path)
 
-    return out_path
+    info_path.write_text(json.dumps(run_info, indent=2), encoding="utf-8")
+
+    return package_path
 
 
 # ---------------------------------------------------------------------------
@@ -528,6 +561,10 @@ def parse_args(argv=None):
         "--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR,
         help=f"Where to save projected checkpoints (default: {DEFAULT_OUTPUT_DIR})"
     )
+    parser.add_argument(
+        "--overwrite", action="store_true",
+        help="Replace an existing projected package for the same source and level"
+    )
     args = parser.parse_args(argv)
 
     if not args.report:
@@ -581,10 +618,25 @@ def main(argv=None):
     )
 
     if not args.no_save:
-        out_path = save_projected_checkpoint(
-            projected, checkpoint, args, ranks, summary, best_epoch, results
+        run_info = {
+            "source_checkpoint": str(args.checkpoint),
+            "layers": list(args.layers),
+            "mode": args.mode,
+            "keep": args.keep,
+            "summary": summary,
+            "finetune_epochs": 0 if args.no_finetune else args.epochs,
+            "finetune_lr": args.lr,
+            "finetune_best_epoch": best_epoch,
+            "seed": SEED,
+            "torch_version": str(torch.__version__),
+            "results": results,
+        }
+        out_path = save_projected_package(
+            projected, checkpoint, ranks,
+            run_dir_for(args.output_dir, args.checkpoint, args.mode, args.keep),
+            run_info, overwrite=args.overwrite,
         )
-        print("Projected checkpoint:", out_path)
+        print("Projected package:", out_path)
 
 
 if __name__ == "__main__":

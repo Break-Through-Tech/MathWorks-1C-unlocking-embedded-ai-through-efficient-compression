@@ -10,9 +10,18 @@ from src.cnn_1D.cnn_model import BearingCNN
 from src.cnn_1D.cnn_project import (
     DEFAULT_CHECKPOINT, DEFAULT_LAYERS,
     build_projected_model, conv_svd, factorize_conv, layer_report,
-    load_model, project_model, select_rank,
+    load_model, project_model, save_projected_package, select_rank,
 )
 from src.cnn_1D.cnn_train import prepare_data
+from src.cnn_1D.projection_robustness import (
+    build_conditions, check_against_reference, evaluate_conditions,
+)
+from src.cnn_1D.projection_build import SOURCES
+
+ROUGH_CHECKPOINTS = {
+    SOURCES[0]: Path("cnn_outputs/cnn_rough_seed42.pth"),
+    SOURCES[1]: Path("cnn_outputs/cnn_rough_aug_seed42.pth"),
+}
 
 
 def val_inputs(checkpoint):
@@ -124,6 +133,45 @@ def main():
 
     # 8. Empty ranks gives the plain baseline architecture.
     assert repr(build_projected_model({})) == repr(BearingCNN())
+
+    # 9. Gurbaj's final packages hold the same weights as the rough
+    #    checkpoints that Part 1 was run on.
+    for source, rough_path in ROUGH_CHECKPOINTS.items():
+        final, final_ckpt = load_model(source)
+        rough, rough_ckpt = load_model(rough_path)
+        for key, value in rough.state_dict().items():
+            assert torch.equal(final.state_dict()[key], value), (source, key)
+        assert final_ckpt["train_mean"] == rough_ckpt["train_mean"]
+        assert final_ckpt["train_std"] == rough_ckpt["train_std"]
+        assert final_ckpt.get("augmentation", "none") == rough_ckpt["augmentation"]
+    print("Final packages match the rough checkpoints: PASSED")
+
+    # 10. The lean inference package reloads to the same model and is
+    #     never silently overwritten.
+    with tempfile.TemporaryDirectory() as folder:
+        run_dir = Path(folder) / "rank_25pct"
+        path = save_projected_package(projected, checkpoint, ranks, run_dir, {"keep": 0.25})
+        restored, package = load_model(path)
+        assert package["projection_ranks"] == ranks
+        assert package.get("augmentation", "none") == checkpoint.get("augmentation", "none")
+        with torch.inference_mode():
+            torch.testing.assert_close(restored(inputs), projected_logits, rtol=1e-6, atol=1e-6)
+        try:
+            save_projected_package(projected, checkpoint, ranks, run_dir, {})
+            raise AssertionError("overwrite was not refused")
+        except FileExistsError:
+            pass
+    print("Inference package save/reload: PASSED")
+
+    # 11. The regenerated robustness windows reproduce Gurbaj's recorded
+    #     results for both dense sources.
+    conditions, y = build_conditions()
+    targets = torch.tensor([("Normal", "InnerRaceFault", "OuterRaceFault").index(label) for label in y])
+    for source in SOURCES:
+        dense, dense_ckpt = load_model(source)
+        check_against_reference(dense_ckpt.get("augmentation", "none"),
+                                evaluate_conditions(dense, dense_ckpt, conditions, targets))
+    print("Robustness suite matches Gurbaj's recorded results: PASSED")
 
     print("ALL PROJECTION TESTS PASSED")
 
