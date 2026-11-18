@@ -1,4 +1,4 @@
-
+import argparse
 import csv
 import random
 from pathlib import Path
@@ -104,7 +104,25 @@ def evaluate(model, loader, device):
 
 
 def main():
-    set_seed(SEED)
+    parser = argparse.ArgumentParser(
+        description="Train the original CNN with controlled augmentation"
+    )
+    parser.add_argument("--seed", type=int, default=SEED)
+    parser.add_argument(
+        "--mode",
+        choices=("shift", "noise", "both"),
+        default="both"
+    )
+    args = parser.parse_args()
+
+    augmentation_labels = {
+        "shift": "shift_p0.5",
+        "noise": "noise_p0.5_20dB",
+        "both": "shift_p0.5_noise_p0.5_20dB",
+    }
+    augmentation = augmentation_labels[args.mode]
+
+    set_seed(args.seed)
     OUTPUT_DIR.mkdir(exist_ok=True)
 
     device = torch.device(
@@ -126,11 +144,11 @@ def main():
     assert std > 0
 
     train_data = AugmentedTrainingDataset(
-    X_train, y_train, mean, std, seed=SEED
+    X_train, y_train, mean, std, seed=args.seed, mode = args.mode
     )
     val_data = prepare_data(X_val, y_val, mean, std)
 
-    generator = torch.Generator().manual_seed(SEED)
+    generator = torch.Generator().manual_seed(args.seed)
 
     train_loader = DataLoader(
         train_data,
@@ -169,7 +187,7 @@ def main():
     # Fail before any training if this exact experiment already exists.
     checkpoint_path, history_path = reserve_run_paths(
         OUTPUT_DIR, model, optimizer,
-        seed=SEED, augmentation="shift_p0.5_noise_p0.5_20dB",
+        seed=args.seed, augmentation=augmentation,
         batch_size=BATCH_SIZE, epochs=EPOCHS
     )
 
@@ -232,15 +250,18 @@ def main():
 
             torch.save({
                 "model_state_dict": model.state_dict(),
+                "channels": (16, 32, 64, 96),
+                "dropout": 0.20,
+                "augmentation_mode": args.mode,
                 "epoch": epoch,
-                "seed": SEED,
+                "seed": args.seed,
                 "train_mean": mean,
                 "train_std": std,
                 "class_names": CLASS_NAMES,
                 "learning_rate": LEARNING_RATE,
                 "batch_size": BATCH_SIZE,
                 "epoch_budget": EPOCHS,
-                "augmentation": "shift_p0.5_noise_p0.5_20dB",
+                "augmentation": augmentation,
                 "val_loss": val_loss,
                 "val_accuracy": val_acc,
                 "torch_version": str(torch.__version__),

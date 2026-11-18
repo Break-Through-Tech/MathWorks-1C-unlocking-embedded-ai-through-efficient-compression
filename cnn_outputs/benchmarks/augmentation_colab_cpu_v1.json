@@ -1,0 +1,52 @@
+{
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "torch_version": "2.14.1+cpu",
+  "device": "CPU",
+  "threads": 1,
+  "timing_input": "raw validation windows",
+  "includes_preprocessing": true,
+  "warmup": 10,
+  "repetitions": 100,
+  "results": [
+    {
+      "name": "original_reference_seed42",
+      "augmentation": "none",
+      "seed": 42,
+      "parameters": 50819,
+      "model_size_mb": 0.214793,
+      "mean_latency_ms": 1.5238259300031132,
+      "std_latency_ms": 0.25174853714745676,
+      "artifact_sha256": "1fcfeb699ca03b9e39af90e82a3b810889a94c877125177c90a4b17b1cb85206"
+    },
+    {
+      "name": "original_shift_seed42",
+      "augmentation": "shift_p0.5",
+      "seed": 42,
+      "parameters": 50819,
+      "model_size_mb": 0.214857,
+      "mean_latency_ms": 1.5205271400191123,
+      "std_latency_ms": 0.16989418135611173,
+      "artifact_sha256": "18c67d1d8849aa3b28337a3e5a300540263c7a30306cb4862fba4c54db352ae1"
+    },
+    {
+      "name": "original_noise_seed42",
+      "augmentation": "noise_p0.5_20dB",
+      "seed": 42,
+      "parameters": 50819,
+      "model_size_mb": 0.214857,
+      "mean_latency_ms": 1.4948665700012498,
+      "std_latency_ms": 0.20206204932110264,
+      "artifact_sha256": "e3f8b1038d8d1f706b9e181de90463d82af207372c126fb72972ac590efef99e"
+    },
+    {
+      "name": "original_both_seed42",
+      "augmentation": "shift_p0.5_noise_p0.5_20dB",
+      "seed": 42,
+      "parameters": 50819,
+      "model_size_mb": 0.214857,
+      "mean_latency_ms": 1.4789748900102495,
+      "std_latency_ms": 0.2038010518652895,
+      "artifact_sha256": "a0da5068425cef7556ad3c9595d46d9abaf3e4df268579e89fd77cec1baddf3d"
+    }
+  ]
+}
