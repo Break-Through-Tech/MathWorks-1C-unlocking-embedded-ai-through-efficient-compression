@@ -1,0 +1,31 @@
+{
+  "format_version": 1,
+  "models": [
+    {
+      "name": "original_reference_seed42",
+      "artifact": "cnn_outputs\\final_models\\original_reference_seed42.pth",
+      "source_checkpoint": "cnn_outputs\\cnn_rough_seed42.pth",
+      "source_sha256": "891eb09b63578d12b62e6fe1d9ea0918c78f8aa3b66b0d2f343387a83ffdc282",
+      "artifact_sha256": "1fcfeb699ca03b9e39af90e82a3b810889a94c877125177c90a4b17b1cb85206",
+      "seed": 42,
+      "parameters": 50819,
+      "size_bytes": 214793,
+      "validation_accuracy": 1.0,
+      "validation_loss": 0.0002417492300823883,
+      "selection": "Established team compression reference"
+    },
+    {
+      "name": "micro_selected_seed1337",
+      "artifact": "cnn_outputs\\final_models\\micro_selected_seed1337.pth",
+      "source_checkpoint": "cnn_outputs\\cnn_none_seed1337_adam_lr0p001_bs32_ep60_m32faeaa30a_oe1f37b6114\\checkpoint.pth",
+      "source_sha256": "e37515f16ec30f5426accf056123b08217d4519d69e8cdacacf5389066317b62",
+      "artifact_sha256": "94ba054cc1e8c6962250bb1ac74d67dbbb60769b96d1392191e2225bc7269c7c",
+      "seed": 1337,
+      "parameters": 923,
+      "size_bytes": 13641,
+      "validation_accuracy": 1.0,
+      "validation_loss": 0.005288183689117432,
+      "selection": "Minimum clean-validation loss among micro seeds"
+    }
+  ]
+}

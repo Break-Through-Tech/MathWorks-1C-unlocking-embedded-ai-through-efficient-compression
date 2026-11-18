@@ -1,0 +1,1056 @@
+{
+  "evaluation": "Final frozen CNN test evaluation",
+  "freeze_document": "docs\\cnn_final_selection_freeze.md",
+  "test_samples": 102,
+  "class_names": [
+    "Normal",
+    "InnerRaceFault",
+    "OuterRaceFault"
+  ],
+  "seeds": [
+    42,
+    1337,
+    2026
+  ],
+  "runs": [
+    {
+      "group": "Original clean",
+      "seed": 42,
+      "checkpoint": "cnn_outputs\\cnn_rough_seed42.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "none",
+      "best_validation_epoch": 60,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original clean",
+      "seed": 1337,
+      "checkpoint": "cnn_outputs\\cnn_none_seed1337_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "none",
+      "best_validation_epoch": 59,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original clean",
+      "seed": 2026,
+      "checkpoint": "cnn_outputs\\cnn_none_seed2026_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "none",
+      "best_validation_epoch": 60,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original shift",
+      "seed": 42,
+      "checkpoint": "cnn_outputs\\cnn_shift_p0p5_seed42_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "shift_p0.5",
+      "best_validation_epoch": 60,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original shift",
+      "seed": 1337,
+      "checkpoint": "cnn_outputs\\cnn_shift_p0p5_seed1337_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "shift_p0.5",
+      "best_validation_epoch": 57,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original shift",
+      "seed": 2026,
+      "checkpoint": "cnn_outputs\\cnn_shift_p0p5_seed2026_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "shift_p0.5",
+      "best_validation_epoch": 60,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original noise",
+      "seed": 42,
+      "checkpoint": "cnn_outputs\\cnn_noise_p0p5_20dB_seed42_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "noise_p0.5_20dB",
+      "best_validation_epoch": 60,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original noise",
+      "seed": 1337,
+      "checkpoint": "cnn_outputs\\cnn_noise_p0p5_20dB_seed1337_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "noise_p0.5_20dB",
+      "best_validation_epoch": 59,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original noise",
+      "seed": 2026,
+      "checkpoint": "cnn_outputs\\cnn_noise_p0p5_20dB_seed2026_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "noise_p0.5_20dB",
+      "best_validation_epoch": 50,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original both",
+      "seed": 42,
+      "checkpoint": "cnn_outputs\\cnn_rough_aug_seed42.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "shift_p0.5_noise_p0.5_20dB",
+      "best_validation_epoch": 60,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original both",
+      "seed": 1337,
+      "checkpoint": "cnn_outputs\\cnn_shift_p0p5_noise_p0p5_20dB_seed1337_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "shift_p0.5_noise_p0.5_20dB",
+      "best_validation_epoch": 42,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original both",
+      "seed": 2026,
+      "checkpoint": "cnn_outputs\\cnn_shift_p0p5_noise_p0p5_20dB_seed2026_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.2,
+      "augmentation": "shift_p0.5_noise_p0.5_20dB",
+      "best_validation_epoch": 60,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original no dropout",
+      "seed": 42,
+      "checkpoint": "cnn_outputs\\cnn_none_seed42_adam_lr0p001_bs32_ep60_m302088527e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.0,
+      "augmentation": "none",
+      "best_validation_epoch": 57,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original no dropout",
+      "seed": 1337,
+      "checkpoint": "cnn_outputs\\cnn_none_seed1337_adam_lr0p001_bs32_ep60_m302088527e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.0,
+      "augmentation": "none",
+      "best_validation_epoch": 57,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Original no dropout",
+      "seed": 2026,
+      "checkpoint": "cnn_outputs\\cnn_none_seed2026_adam_lr0p001_bs32_ep60_m302088527e_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        16,
+        32,
+        64,
+        96
+      ],
+      "dropout": 0.0,
+      "augmentation": "none",
+      "best_validation_epoch": 60,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Micro clean",
+      "seed": 42,
+      "checkpoint": "cnn_outputs\\cnn_none_seed42_adam_lr0p001_bs32_ep60_m32faeaa30a_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        2,
+        4,
+        8,
+        12
+      ],
+      "dropout": 0.2,
+      "augmentation": "none",
+      "best_validation_epoch": 60,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Micro clean",
+      "seed": 1337,
+      "checkpoint": "cnn_outputs\\cnn_none_seed1337_adam_lr0p001_bs32_ep60_m32faeaa30a_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        2,
+        4,
+        8,
+        12
+      ],
+      "dropout": 0.2,
+      "augmentation": "none",
+      "best_validation_epoch": 60,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    },
+    {
+      "group": "Micro clean",
+      "seed": 2026,
+      "checkpoint": "cnn_outputs\\cnn_none_seed2026_adam_lr0p001_bs32_ep60_m32faeaa30a_oe1f37b6114\\checkpoint.pth",
+      "channels": [
+        2,
+        4,
+        8,
+        12
+      ],
+      "dropout": 0.2,
+      "augmentation": "none",
+      "best_validation_epoch": 60,
+      "test_accuracy": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          34,
+          0,
+          0
+        ],
+        [
+          0,
+          34,
+          0
+        ],
+        [
+          0,
+          0,
+          34
+        ]
+      ],
+      "per_class": {
+        "Normal": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "InnerRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        },
+        "OuterRaceFault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 34
+        }
+      }
+    }
+  ],
+  "summaries": [
+    {
+      "group": "Original clean",
+      "mean_test_accuracy": 1.0,
+      "sd_test_accuracy": 0.0,
+      "mean_macro_f1": 1.0,
+      "sd_macro_f1": 0.0
+    },
+    {
+      "group": "Original shift",
+      "mean_test_accuracy": 1.0,
+      "sd_test_accuracy": 0.0,
+      "mean_macro_f1": 1.0,
+      "sd_macro_f1": 0.0
+    },
+    {
+      "group": "Original noise",
+      "mean_test_accuracy": 1.0,
+      "sd_test_accuracy": 0.0,
+      "mean_macro_f1": 1.0,
+      "sd_macro_f1": 0.0
+    },
+    {
+      "group": "Original both",
+      "mean_test_accuracy": 1.0,
+      "sd_test_accuracy": 0.0,
+      "mean_macro_f1": 1.0,
+      "sd_macro_f1": 0.0
+    },
+    {
+      "group": "Original no dropout",
+      "mean_test_accuracy": 1.0,
+      "sd_test_accuracy": 0.0,
+      "mean_macro_f1": 1.0,
+      "sd_macro_f1": 0.0
+    },
+    {
+      "group": "Micro clean",
+      "mean_test_accuracy": 1.0,
+      "sd_test_accuracy": 0.0,
+      "mean_macro_f1": 1.0,
+      "sd_macro_f1": 0.0
+    }
+  ],
+  "limitations": [
+    "Previous team test evaluations mean this is not fully blind.",
+    "Recording-level split independence is unverified.",
+    "The three training seeds share the same test examples."
+  ]
+}

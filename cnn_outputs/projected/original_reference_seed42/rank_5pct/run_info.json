@@ -1,0 +1,56 @@
+{
+  "source_checkpoint": "cnn_outputs/final_models/original_reference_seed42.pth",
+  "source_sha256": "1fcfeb699ca03b9e39af90e82a3b810889a94c877125177c90a4b17b1cb85206",
+  "augmentation": "none",
+  "layers": [
+    "features.8",
+    "features.12"
+  ],
+  "mode": "rank",
+  "keep": 0.05,
+  "ranks": {
+    "features.8": 3,
+    "features.12": 5
+  },
+  "summary": [
+    {
+      "layer": "features.8",
+      "full_rank": 64,
+      "rank": 3,
+      "break_even_rank": 49,
+      "energy_kept": 0.1647845776703254,
+      "params_before": 14400,
+      "params_after": 928
+    },
+    {
+      "layer": "features.12",
+      "full_rank": 96,
+      "rank": 5,
+      "break_even_rank": 73,
+      "energy_kept": 0.24515865684427432,
+      "params_before": 30816,
+      "params_after": 2176
+    }
+  ],
+  "params_dense": 50819,
+  "params": 8707,
+  "val_dense": {
+    "loss": 0.0002417228253627265,
+    "accuracy": 1.0
+  },
+  "val_before_finetune": {
+    "loss": 2.5400574295609086,
+    "accuracy": 0.3333333333333333
+  },
+  "val_after_finetune": {
+    "loss": 0.0005858954456117419,
+    "accuracy": 1.0
+  },
+  "finetune_epochs": 15,
+  "finetune_lr": 0.0001,
+  "finetune_best_epoch": 15,
+  "seed": 42,
+  "test_split_used": false,
+  "torch_version": "2.15.0+cpu",
+  "platform": "Windows-11-10.0.26200-SP0"
+}

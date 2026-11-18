@@ -1,0 +1,44 @@
+{
+  "format_version": 1,
+  "models": [
+    {
+      "name": "original_shift_seed42",
+      "group": "Original shift",
+      "augmentation": "shift_p0.5",
+      "seed": 42,
+      "parameters": 50819,
+      "source_checkpoint": "cnn_outputs\\cnn_shift_p0p5_seed42_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "source_sha256": "e66d003d6215b28aa74a1cce30c6221b93630af13cb49d937958e8c7d8cd094a",
+      "artifact": "cnn_outputs\\augmentation_models\\original_shift_seed42.pth",
+      "artifact_sha256": "18c67d1d8849aa3b28337a3e5a300540263c7a30306cb4862fba4c54db352ae1",
+      "size_bytes": 214857,
+      "validation_accuracy": 1.0
+    },
+    {
+      "name": "original_noise_seed42",
+      "group": "Original noise",
+      "augmentation": "noise_p0.5_20dB",
+      "seed": 42,
+      "parameters": 50819,
+      "source_checkpoint": "cnn_outputs\\cnn_noise_p0p5_20dB_seed42_adam_lr0p001_bs32_ep60_m1cba4eb61e_oe1f37b6114\\checkpoint.pth",
+      "source_sha256": "ec2f6fae57c7b299e8ad5853c9face03a00627ab52f1c061e638c5a50e65004b",
+      "artifact": "cnn_outputs\\augmentation_models\\original_noise_seed42.pth",
+      "artifact_sha256": "e3f8b1038d8d1f706b9e181de90463d82af207372c126fb72972ac590efef99e",
+      "size_bytes": 214857,
+      "validation_accuracy": 1.0
+    },
+    {
+      "name": "original_both_seed42",
+      "group": "Original both",
+      "augmentation": "shift_p0.5_noise_p0.5_20dB",
+      "seed": 42,
+      "parameters": 50819,
+      "source_checkpoint": "cnn_outputs\\cnn_rough_aug_seed42.pth",
+      "source_sha256": "0cda48dc6ed3cb93ebbe68be36b33f86e9600ce2b3a94edecf544995ca40c2eb",
+      "artifact": "cnn_outputs\\augmentation_models\\original_both_seed42.pth",
+      "artifact_sha256": "a0da5068425cef7556ad3c9595d46d9abaf3e4df268579e89fd77cec1baddf3d",
+      "size_bytes": 214857,
+      "validation_accuracy": 1.0
+    }
+  ]
+}
