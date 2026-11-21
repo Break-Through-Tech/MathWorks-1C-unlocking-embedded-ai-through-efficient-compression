@@ -1,0 +1,20 @@
+{
+  "backend": "qnnpack",
+  "source": "cnn_outputs/projected/original_both_seed42/rank_10pct/model.pth",
+  "file": "cnn_outputs/combined/projected10_int8/model_int8.pth",
+  "size_mb": 0.021218,
+  "fp32_projected_size_mb": 0.057719,
+  "fp32_projected_val_acc": 1.0,
+  "fp32_projected_test_acc": 1.0,
+  "fp32_projected_latency_mean_ms": 0.8267683623125777,
+  "fp32_projected_latency_std_ms": 0.014375434728341702,
+  "fp32_projected_latency_min_ms": 0.7449589902535081,
+  "fp32_projected_latency_max_ms": 0.8839169749990106,
+  "combined_val_acc": 1.0,
+  "combined_test_acc": 1.0,
+  "combined_latency_mean_ms": 0.8523358503589407,
+  "combined_latency_std_ms": 0.020749293352464202,
+  "combined_latency_min_ms": 0.7809999515302479,
+  "combined_latency_max_ms": 0.9694159962236881,
+  "test_prediction_agreement": 1.0
+}
