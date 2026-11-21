@@ -1,0 +1,21 @@
+{
+  "backend": "qnnpack",
+  "source": "cnn_outputs/pruned/unstructured_97pct/model_sparse.npz",
+  "file": "cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz",
+  "int8_weight_zero_fraction": 0.9699952183614918,
+  "size_mb": 0.005201,
+  "fp32_pruned_sparse_mb": 0.012026,
+  "fp32_pruned_val_acc": 1.0,
+  "fp32_pruned_test_acc": 1.0,
+  "fp32_pruned_latency_mean_ms": 1.012022119248286,
+  "fp32_pruned_latency_std_ms": 0.01026633057634427,
+  "fp32_pruned_latency_min_ms": 0.954125018324703,
+  "fp32_pruned_latency_max_ms": 1.035875000525266,
+  "combined_val_acc": 1.0,
+  "combined_test_acc": 1.0,
+  "combined_latency_mean_ms": 1.057074085692875,
+  "combined_latency_std_ms": 0.012939982107164209,
+  "combined_latency_min_ms": 1.0347500210627913,
+  "combined_latency_max_ms": 1.135041005909443,
+  "test_prediction_agreement": 1.0
+}

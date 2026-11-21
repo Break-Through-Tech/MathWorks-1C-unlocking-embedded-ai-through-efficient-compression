@@ -1,0 +1,20 @@
+{
+  "backend": "qnnpack",
+  "source": "cnn_outputs/final_models/micro_selected_seed1337.pth",
+  "file": "cnn_outputs/combined/micro_int8/model_int8.pth",
+  "size_mb": 0.007906,
+  "fp32_micro_size_mb": 0.013641,
+  "fp32_micro_val_acc": 1.0,
+  "fp32_micro_test_acc": 1.0,
+  "fp32_micro_latency_mean_ms": 0.17824747890699655,
+  "fp32_micro_latency_std_ms": 0.005015087997487171,
+  "fp32_micro_latency_min_ms": 0.1567919971421361,
+  "fp32_micro_latency_max_ms": 0.19066600361838937,
+  "combined_val_acc": 1.0,
+  "combined_test_acc": 1.0,
+  "combined_latency_mean_ms": 0.2847096312325448,
+  "combined_latency_std_ms": 0.0030652665794491858,
+  "combined_latency_min_ms": 0.2825839910656214,
+  "combined_latency_max_ms": 0.30345801496878266,
+  "test_prediction_agreement": 1.0
+}
