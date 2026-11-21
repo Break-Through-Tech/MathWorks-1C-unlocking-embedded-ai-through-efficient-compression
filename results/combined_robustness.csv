@@ -1,0 +1,181 @@
+model,compression,artifact,size_mb,condition,kind,snr_db,realization,shift,samples,correct,accuracy,cross_entropy
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_clean,clean,,,,27,27,1.0,0.00024172282428480685
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_0db_r0,noise,0,0,,27,18,0.6666666666666666,1.5817451477050781
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_0db_r1,noise,0,1,,27,18,0.6666666666666666,1.8393224477767944
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_0db_r2,noise,0,2,,27,18,0.6666666666666666,1.8969322443008423
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_10db_r0,noise,10,0,,27,27,1.0,0.0061935740523040295
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_10db_r1,noise,10,1,,27,27,1.0,0.009055324830114841
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_10db_r2,noise,10,2,,27,27,1.0,0.009652446024119854
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_15db_r0,noise,15,0,,27,27,1.0,0.0003867572813760489
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_15db_r1,noise,15,1,,27,27,1.0,0.0003894780238624662
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_15db_r2,noise,15,2,,27,27,1.0,0.0003306202997919172
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_20db_r0,noise,20,0,,27,27,1.0,0.00024989526718854904
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_20db_r1,noise,20,1,,27,27,1.0,0.0002637614088598639
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_20db_r2,noise,20,2,,27,27,1.0,0.00024965230841189623
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_5db_r0,noise,5,0,,27,27,1.0,0.10669490694999695
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_5db_r1,noise,5,1,,27,27,1.0,0.1100025326013565
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_noise_5db_r2,noise,5,2,,27,26,0.9629629629629629,0.13656757771968842
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_shift_m250,shift,,,-250,27,27,1.0,0.00018259024363942444
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_shift_m500,shift,,,-500,27,27,1.0,0.00023348868126049638
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_shift_p250,shift,,,250,27,27,1.0,0.0002078874094877392
+Dense reference,None,cnn_outputs/final_models/original_reference_seed42.pth,0.214793,X_shift_p500,shift,,,500,27,27,1.0,0.00023759901523590088
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_clean,clean,,,,27,27,1.0,0.0004489624407142401
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_0db_r0,noise,0,0,,27,18,0.6666666666666666,2.013808012008667
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_0db_r1,noise,0,1,,27,18,0.6666666666666666,2.17740797996521
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_0db_r2,noise,0,2,,27,18,0.6666666666666666,2.3153083324432373
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_10db_r0,noise,10,0,,27,27,1.0,0.015905695036053658
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_10db_r1,noise,10,1,,27,27,1.0,0.014057333581149578
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_10db_r2,noise,10,2,,27,27,1.0,0.016858164221048355
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_15db_r0,noise,15,0,,27,27,1.0,0.0008877806249074638
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_15db_r1,noise,15,1,,27,27,1.0,0.0009067622013390064
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_15db_r2,noise,15,2,,27,27,1.0,0.0007242572028189898
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_20db_r0,noise,20,0,,27,27,1.0,0.0004634763754438609
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_20db_r1,noise,20,1,,27,27,1.0,0.000505181320477277
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_20db_r2,noise,20,2,,27,27,1.0,0.0004801551403943449
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_5db_r0,noise,5,0,,27,22,0.8148148148148148,0.28700557351112366
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_5db_r1,noise,5,1,,27,24,0.8888888888888888,0.3047269284725189
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_noise_5db_r2,noise,5,2,,27,22,0.8148148148148148,0.3568672835826874
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_shift_m250,shift,,,-250,27,27,1.0,0.0004163705452810973
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_shift_m500,shift,,,-500,27,27,1.0,0.00045867785229347646
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_shift_p250,shift,,,250,27,27,1.0,0.0004965605330653489
+Pruned 90%,Pruning,cnn_outputs/pruned/unstructured_90pct/model_sparse.npz,0.026237,X_shift_p500,shift,,,500,27,27,1.0,0.0004508832353167236
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_clean,clean,,,,27,27,1.0,0.004981599282473326
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_0db_r0,noise,0,0,,27,18,0.6666666666666666,2.442793369293213
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_0db_r1,noise,0,1,,27,18,0.6666666666666666,2.547922372817993
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_0db_r2,noise,0,2,,27,18,0.6666666666666666,2.6508913040161133
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_10db_r0,noise,10,0,,27,27,1.0,0.08741122484207153
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_10db_r1,noise,10,1,,27,27,1.0,0.06838471442461014
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_10db_r2,noise,10,2,,27,27,1.0,0.093757264316082
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_15db_r0,noise,15,0,,27,27,1.0,0.007978782057762146
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_15db_r1,noise,15,1,,27,27,1.0,0.008889999240636826
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_15db_r2,noise,15,2,,27,27,1.0,0.00787185225635767
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_20db_r0,noise,20,0,,27,27,1.0,0.00503196008503437
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_20db_r1,noise,20,1,,27,27,1.0,0.00541676813736558
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_20db_r2,noise,20,2,,27,27,1.0,0.005222668405622244
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_5db_r0,noise,5,0,,27,16,0.5925925925925926,0.8208863139152527
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_5db_r1,noise,5,1,,27,18,0.6666666666666666,0.7692237496376038
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_noise_5db_r2,noise,5,2,,27,14,0.5185185185185185,0.8668655157089233
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_shift_m250,shift,,,-250,27,27,1.0,0.004346796777099371
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_shift_m500,shift,,,-500,27,27,1.0,0.0053793322294950485
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_shift_p250,shift,,,250,27,27,1.0,0.004977959208190441
+Pruned 95%,Pruning,cnn_outputs/pruned/unstructured_95pct/model_sparse.npz,0.016208,X_shift_p500,shift,,,500,27,27,1.0,0.005464925430715084
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_clean,clean,,,,27,27,1.0,0.11457371711730957
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_0db_r0,noise,0,0,,27,15,0.5555555555555556,1.5524992942810059
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_0db_r1,noise,0,1,,27,14,0.5185185185185185,1.7227123975753784
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_0db_r2,noise,0,2,,27,12,0.4444444444444444,1.5875952243804932
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_10db_r0,noise,10,0,,27,26,0.9629629629629629,0.19230349361896515
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_10db_r1,noise,10,1,,27,26,0.9629629629629629,0.17929036915302277
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_10db_r2,noise,10,2,,27,26,0.9629629629629629,0.19176147878170013
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_15db_r0,noise,15,0,,27,27,1.0,0.12138637900352478
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_15db_r1,noise,15,1,,27,27,1.0,0.12255498021841049
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_15db_r2,noise,15,2,,27,27,1.0,0.11726303398609161
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_20db_r0,noise,20,0,,27,27,1.0,0.11402782052755356
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_20db_r1,noise,20,1,,27,27,1.0,0.115497887134552
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_20db_r2,noise,20,2,,27,27,1.0,0.1125606894493103
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_5db_r0,noise,5,0,,27,18,0.6666666666666666,0.6054840683937073
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_5db_r1,noise,5,1,,27,20,0.7407407407407407,0.6002522110939026
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_noise_5db_r2,noise,5,2,,27,18,0.6666666666666666,0.622171938419342
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_shift_m250,shift,,,-250,27,27,1.0,0.111198790371418
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_shift_m500,shift,,,-500,27,27,1.0,0.10363343358039856
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_shift_p250,shift,,,250,27,27,1.0,0.10701935738325119
+Pruned 97%,Pruning,cnn_outputs/pruned/unstructured_97pct/model_sparse.npz,0.012026,X_shift_p500,shift,,,500,27,27,1.0,0.11191994696855545
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_clean,clean,,,,27,27,1.0,0.000242058391449973
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_0db_r0,noise,0,0,,27,18,0.6666666666666666,1.6060091257095337
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_0db_r1,noise,0,1,,27,18,0.6666666666666666,1.8390791416168213
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_0db_r2,noise,0,2,,27,18,0.6666666666666666,1.8999345302581787
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_10db_r0,noise,10,0,,27,27,1.0,0.006560448557138443
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_10db_r1,noise,10,1,,27,27,1.0,0.009779048152267933
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_10db_r2,noise,10,2,,27,27,1.0,0.010530520230531693
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_15db_r0,noise,15,0,,27,27,1.0,0.0004166491562500596
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_15db_r1,noise,15,1,,27,27,1.0,0.00039605790516361594
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_15db_r2,noise,15,2,,27,27,1.0,0.0003429862263146788
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_20db_r0,noise,20,0,,27,27,1.0,0.00025643553817644715
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_20db_r1,noise,20,1,,27,27,1.0,0.00026621620054356754
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_20db_r2,noise,20,2,,27,27,1.0,0.00025174071197398007
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_5db_r0,noise,5,0,,27,27,1.0,0.11119265854358673
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_5db_r1,noise,5,1,,27,27,1.0,0.11640768498182297
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_noise_5db_r2,noise,5,2,,27,26,0.9629629629629629,0.14327628910541534
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_shift_m250,shift,,,-250,27,27,1.0,0.00018162162450607866
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_shift_m500,shift,,,-500,27,27,1.0,0.00023050833260640502
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_shift_p250,shift,,,250,27,27,1.0,0.0002098772383760661
+INT8 (Venya),Quantization,cnn_outputs/quantized/static_int8_histogram_qnnpack/int8_state_dict.pth,0.059265,X_shift_p500,shift,,,500,27,27,1.0,0.0002411691821180284
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_clean,clean,,,,27,27,1.0,0.11085085570812225
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_0db_r0,noise,0,0,,27,13,0.48148148148148145,1.6751512289047241
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_0db_r1,noise,0,1,,27,10,0.37037037037037035,1.878735065460205
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_0db_r2,noise,0,2,,27,11,0.4074074074074074,1.7173573970794678
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_10db_r0,noise,10,0,,27,26,0.9629629629629629,0.20569846034049988
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_10db_r1,noise,10,1,,27,26,0.9629629629629629,0.1912776082754135
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_10db_r2,noise,10,2,,27,26,0.9629629629629629,0.20338885486125946
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_15db_r0,noise,15,0,,27,27,1.0,0.12103180587291718
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_15db_r1,noise,15,1,,27,27,1.0,0.12043075263500214
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_15db_r2,noise,15,2,,27,27,1.0,0.1190534234046936
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_20db_r0,noise,20,0,,27,27,1.0,0.10410065948963165
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_20db_r1,noise,20,1,,27,27,1.0,0.11118041723966599
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_20db_r2,noise,20,2,,27,27,1.0,0.10695618391036987
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_5db_r0,noise,5,0,,27,17,0.6296296296296297,0.6589416861534119
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_5db_r1,noise,5,1,,27,18,0.6666666666666666,0.6487424373626709
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_noise_5db_r2,noise,5,2,,27,14,0.5185185185185185,0.6624870896339417
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_shift_m250,shift,,,-250,27,27,1.0,0.10570291429758072
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_shift_m500,shift,,,-500,27,27,1.0,0.10197106748819351
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_shift_p250,shift,,,250,27,27,1.0,0.0988948792219162
+Pruned 97% + INT8,Pruning + Quantization,cnn_outputs/combined/pruned97_int8/model_sparse_int8.npz,0.005201,X_shift_p500,shift,,,500,27,27,1.0,0.1097065731883049
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_clean,clean,,,,27,27,1.0,0.00013823941117152572
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_0db_r0,noise,0,0,,27,16,0.5925925925925926,1.856903076171875
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_0db_r1,noise,0,1,,27,18,0.6666666666666666,2.1766207218170166
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_0db_r2,noise,0,2,,27,18,0.6666666666666666,2.1725289821624756
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_10db_r0,noise,10,0,,27,27,1.0,0.0028835402335971594
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_10db_r1,noise,10,1,,27,27,1.0,0.002923388732597232
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_10db_r2,noise,10,2,,27,27,1.0,0.005574855022132397
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_15db_r0,noise,15,0,,27,27,1.0,0.00021618169557768852
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_15db_r1,noise,15,1,,27,27,1.0,0.00020131468772888184
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_15db_r2,noise,15,2,,27,27,1.0,0.000179435228346847
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_20db_r0,noise,20,0,,27,27,1.0,0.00014506644220091403
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_20db_r1,noise,20,1,,27,27,1.0,0.00015082297613844275
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_20db_r2,noise,20,2,,27,27,1.0,0.00013222816050983965
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_5db_r0,noise,5,0,,27,26,0.9629629629629629,0.15047213435173035
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_5db_r1,noise,5,1,,27,26,0.9629629629629629,0.14666827023029327
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_noise_5db_r2,noise,5,2,,27,25,0.9259259259259259,0.201619490981102
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_shift_m250,shift,,,-250,27,27,1.0,0.00011835141049232334
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_shift_m500,shift,,,-500,27,27,1.0,0.00012349299504421651
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_shift_p250,shift,,,250,27,27,1.0,0.0001265676401089877
+Projected 10% + INT8,Projection + Quantization,cnn_outputs/combined/projected10_int8/model_int8.pth,0.021218,X_shift_p500,shift,,,500,27,27,1.0,0.000128371364553459
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_clean,clean,,,,27,27,1.0,0.005288169719278812
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_0db_r0,noise,0,0,,27,19,0.7037037037037037,0.8869515061378479
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_0db_r1,noise,0,1,,27,19,0.7037037037037037,1.0273261070251465
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_0db_r2,noise,0,2,,27,18,0.6666666666666666,0.9372970461845398
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_10db_r0,noise,10,0,,27,27,1.0,0.008993595838546753
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_10db_r1,noise,10,1,,27,27,1.0,0.00991189107298851
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_10db_r2,noise,10,2,,27,27,1.0,0.009626774117350578
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_15db_r0,noise,15,0,,27,27,1.0,0.0056726401671767235
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_15db_r1,noise,15,1,,27,27,1.0,0.0057632168754935265
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_15db_r2,noise,15,2,,27,27,1.0,0.005349967163056135
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_20db_r0,noise,20,0,,27,27,1.0,0.005292033310979605
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_20db_r1,noise,20,1,,27,27,1.0,0.005351828411221504
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_20db_r2,noise,20,2,,27,27,1.0,0.005120833870023489
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_5db_r0,noise,5,0,,27,27,1.0,0.11554919928312302
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_5db_r1,noise,5,1,,27,27,1.0,0.1116282045841217
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_noise_5db_r2,noise,5,2,,27,26,0.9629629629629629,0.10971255600452423
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_shift_m250,shift,,,-250,27,27,1.0,0.005463777109980583
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_shift_m500,shift,,,-500,27,27,1.0,0.005571392364799976
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_shift_p250,shift,,,250,27,27,1.0,0.005614894442260265
+Micro,None,cnn_outputs/final_models/micro_selected_seed1337.pth,0.013641,X_shift_p500,shift,,,500,27,27,1.0,0.0057790386490523815
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_clean,clean,,,,27,27,1.0,0.004739020485430956
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_0db_r0,noise,0,0,,27,19,0.7037037037037037,0.9400119185447693
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_0db_r1,noise,0,1,,27,19,0.7037037037037037,1.0785808563232422
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_0db_r2,noise,0,2,,27,18,0.6666666666666666,0.9897311925888062
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_10db_r0,noise,10,0,,27,27,1.0,0.009838370606303215
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_10db_r1,noise,10,1,,27,27,1.0,0.010526432655751705
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_10db_r2,noise,10,2,,27,27,1.0,0.010920745320618153
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_15db_r0,noise,15,0,,27,27,1.0,0.00558814313262701
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_15db_r1,noise,15,1,,27,27,1.0,0.005443661939352751
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_15db_r2,noise,15,2,,27,27,1.0,0.005113956052809954
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_20db_r0,noise,20,0,,27,27,1.0,0.004934122785925865
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_20db_r1,noise,20,1,,27,27,1.0,0.005082974210381508
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_20db_r2,noise,20,2,,27,27,1.0,0.004837263375520706
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_5db_r0,noise,5,0,,27,26,0.9629629629629629,0.13130910694599152
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_5db_r1,noise,5,1,,27,27,1.0,0.1273961216211319
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_noise_5db_r2,noise,5,2,,27,26,0.9629629629629629,0.12651167809963226
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_shift_m250,shift,,,-250,27,27,1.0,0.005130348261445761
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_shift_m500,shift,,,-500,27,27,1.0,0.005304057616740465
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_shift_p250,shift,,,250,27,27,1.0,0.005188536364585161
+Micro + INT8,Quantization,cnn_outputs/combined/micro_int8/model_int8.pth,0.007906,X_shift_p500,shift,,,500,27,27,1.0,0.0052725523710250854
